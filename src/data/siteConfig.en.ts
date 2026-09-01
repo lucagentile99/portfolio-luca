@@ -4,4 +4,5 @@ export const siteConfigEn = {
   headline: "Digital Media Planner · Paid Media · Campaign Strategy",
   location: "Buenos Aires, Argentina",
   availability: "Available for remote opportunities or on-site in CABA",
+  cvPath: "/cv/luca-gentile-cv-en.pdf",
 };

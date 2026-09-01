@@ -10,7 +10,7 @@ export const siteConfig = {
   email: "lucagentile2012@gmail.com",
   linkedin: "https://www.linkedin.com/in/luca-martin-gentile",
   linkedinLabel: "linkedin.com/in/luca-martin-gentile",
-  cvPath: "/cv/luca-gentile-cv.pdf",
+  cvPath: "/cv/luca-gentile-cv-es.pdf",
   photoPath: "/images/profile/luca-gentile.webp",
   // Completar cuando exista un dominio propio. Se deja vacío a propósito:
   // mientras esté vacío no se publican canonical/OG/JSON-LD con una URL de ejemplo.

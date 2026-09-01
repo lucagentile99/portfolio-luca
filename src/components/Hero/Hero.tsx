@@ -13,6 +13,7 @@ export default function Hero() {
   const headline = useLocalized(siteConfig.headline, siteConfigEn.headline);
   const location = useLocalized(siteConfig.location, siteConfigEn.location);
   const availability = useLocalized(siteConfig.availability, siteConfigEn.availability);
+  const cvPath = useLocalized(siteConfig.cvPath, siteConfigEn.cvPath);
 
   // Resalta la última palabra del título con el color de acento, sin
   // modificar el contenido real (heroContent.title queda intacto).
@@ -44,7 +45,7 @@ export default function Hero() {
             <a href="#proyectos" className="btn btn-primary">
               {t.hero.ctaProjects}
             </a>
-            <a href={assetUrl(siteConfig.cvPath)} className="btn btn-outline" download>
+            <a href={assetUrl(cvPath)} className="btn btn-outline" download target="_blank" rel="noreferrer">
               {t.hero.ctaCv}
             </a>
           </Reveal>

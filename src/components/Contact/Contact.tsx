@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { mailtoHref, siteConfig } from "../../data/siteConfig";
+import { siteConfigEn } from "../../data/siteConfig.en";
 import { assetUrl } from "../../utils/assetPath";
-import { useT } from "../../i18n/LanguageContext";
+import { useLocalized, useT } from "../../i18n/LanguageContext";
 import Reveal from "../Reveal";
 import "./Contact.css";
 
 export default function Contact() {
   const t = useT();
+  const cvPath = useLocalized(siteConfig.cvPath, siteConfigEn.cvPath);
   const [copied, setCopied] = useState(false);
 
   const copyEmail = async () => {
@@ -43,7 +45,7 @@ export default function Contact() {
             <a href={siteConfig.linkedin} target="_blank" rel="noreferrer" className="btn btn-outline">
               {t.contact.linkedin}
             </a>
-            <a href={assetUrl(siteConfig.cvPath)} className="btn btn-outline" download>
+            <a href={assetUrl(cvPath)} className="btn btn-outline" download target="_blank" rel="noreferrer">
               {t.contact.downloadCv}
             </a>
           </div>

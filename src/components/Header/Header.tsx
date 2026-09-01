@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { mailtoHref, navLinks, siteConfig } from "../../data/siteConfig";
+import { siteConfigEn } from "../../data/siteConfig.en";
 import { useActiveSection } from "../../hooks/useActiveSection";
 import { assetUrl } from "../../utils/assetPath";
-import { useT } from "../../i18n/LanguageContext";
+import { useLocalized, useT } from "../../i18n/LanguageContext";
 import LanguageSwitcher from "../LanguageSwitcher";
 import "./Header.css";
 
@@ -24,6 +25,7 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const activeId = useActiveSection(sectionIds);
   const t = useT();
+  const cvPath = useLocalized(siteConfig.cvPath, siteConfigEn.cvPath);
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 12);
@@ -95,7 +97,7 @@ export default function Header() {
               <path d="M11.5 10.5v6" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
             </svg>
           </a>
-          <a href={assetUrl(siteConfig.cvPath)} className="btn btn-primary btn-sm" download>
+          <a href={assetUrl(cvPath)} className="btn btn-primary btn-sm" download target="_blank" rel="noreferrer">
             {t.header.downloadCv}
           </a>
         </div>
@@ -139,7 +141,7 @@ export default function Header() {
         </nav>
         <div className="header__mobile-actions">
           <LanguageSwitcher />
-          <a href={assetUrl(siteConfig.cvPath)} className="btn btn-primary" download onClick={closeMenu}>
+          <a href={assetUrl(cvPath)} className="btn btn-primary" download target="_blank" rel="noreferrer" onClick={closeMenu}>
             {t.header.downloadCv}
           </a>
           <a href={siteConfig.linkedin} target="_blank" rel="noreferrer" className="btn btn-outline" onClick={closeMenu}>
