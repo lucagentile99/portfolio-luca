@@ -119,7 +119,19 @@ export default function Header() {
       </div>
 
       <div id="mobile-nav" className={`header__mobile ${isMenuOpen ? "is-open" : ""}`}>
-        <nav aria-label={t.header.mobileNavAria}>
+        <div className="header__mobile-top">
+          <a href="#inicio" className="header__logo" aria-label={t.header.homeAria(siteConfig.name)} onClick={closeMenu}>
+            {siteConfig.initials}
+          </a>
+          <button type="button" className="header__mobile-close" onClick={closeMenu}>
+            <span className="visually-hidden">{t.header.closeMenu}</span>
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M5 5l14 14M19 5 5 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <nav className="header__mobile-nav" aria-label={t.header.mobileNavAria}>
           <ul>
             {navLinks.map((link) => {
               const id = link.href.replace("#", "");
@@ -139,8 +151,9 @@ export default function Header() {
             })}
           </ul>
         </nav>
+
         <div className="header__mobile-actions">
-          <LanguageSwitcher />
+          <LanguageSwitcher className="header__mobile-lang" onAfterChange={closeMenu} />
           <a href={assetUrl(cvPath)} className="btn btn-primary" download target="_blank" rel="noreferrer" onClick={closeMenu}>
             {t.header.downloadCv}
           </a>

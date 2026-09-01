@@ -24,7 +24,7 @@ import { assetUrl } from "../../utils/assetPath";
 import { useLocalized, useT } from "../../i18n/LanguageContext";
 import IconTooltip from "../IconTooltip";
 import Reveal from "../Reveal";
-import { SkillPanel, SkillTabs } from "./SkillTabs";
+import { SkillAccordion, SkillPanel, SkillTabs } from "./SkillTabs";
 import "./Skills.css";
 
 const aiShortNames: Record<string, string> = {
@@ -127,7 +127,7 @@ export default function Skills() {
     [toolGroupLabels, toolStack, aiTools, t]
   );
 
-  const [activeId, setActiveId] = useState(skillModulesEs[0].id);
+  const [activeId, setActiveId] = useState<string | null>(skillModulesEs[0].id);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const baseId = "skills";
   const activeModule = skillModules.find((mod) => mod.id === activeId) ?? skillModules[0];
@@ -154,6 +154,13 @@ export default function Skills() {
             module={activeModule}
             tabId={`${baseId}-tab-${activeModule.id}`}
             panelId={`${baseId}-panel-${activeModule.id}`}
+          />
+          <SkillAccordion
+            modules={skillModules}
+            activeId={activeId}
+            baseId={baseId}
+            onChange={setActiveId}
+            renderIcon={(icon) => <SkillIconGraphic icon={icon} />}
           />
         </Reveal>
 

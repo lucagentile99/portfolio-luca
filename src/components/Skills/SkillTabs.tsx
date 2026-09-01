@@ -1,4 +1,4 @@
-import type { KeyboardEvent, ReactNode, RefObject } from "react";
+import { useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode, type RefObject } from "react";
 import type { SkillIcon, SkillModule } from "../../types";
 import { useT } from "../../i18n/LanguageContext";
 import "./SkillTabs.css";
@@ -40,7 +40,7 @@ export function SkillTab({ module, isActive, tabId, panelId, icon, onSelect, onK
 
 interface SkillTabsProps {
   modules: SkillModule[];
-  activeId: string;
+  activeId: string | null;
   baseId: string;
   onChange: (id: string) => void;
   renderIcon: (icon: SkillIcon) => ReactNode;
@@ -99,6 +99,82 @@ export function SkillPanel({ module, tabId, panelId }: SkillPanelProps) {
           <li key={detail}>{detail}</li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+interface SkillAccordionProps {
+  modules: SkillModule[];
+  activeId: string | null;
+  baseId: string;
+  onChange: (id: string | null) => void;
+  renderIcon: (icon: SkillIcon) => ReactNode;
+}
+
+// Versión mobile de SkillTabs+SkillPanel: en vez de pestañas + un panel
+// compartido al final, cada módulo es un acordeón real — su detalle se
+// despliega inmediatamente debajo de esa misma tarjeta (nunca después de
+// las 4). Solo uno abierto a la vez; tocar el que ya está abierto lo cierra.
+export function SkillAccordion({ modules, activeId, baseId, onChange, renderIcon }: SkillAccordionProps) {
+  const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [heights, setHeights] = useState<number[]>([]);
+
+  useLayoutEffect(() => {
+    setHeights(panelRefs.current.map((el) => el?.scrollHeight ?? 0));
+  }, [activeId]);
+
+  return (
+    <div className="skill-accordion">
+      {modules.map((module, index) => {
+        const isOpen = module.id === activeId;
+        const triggerId = `${baseId}-accordion-trigger-${module.id}`;
+        const panelId = `${baseId}-accordion-panel-${module.id}`;
+
+        return (
+          <div key={module.id} className={`skill-accordion__item ${isOpen ? "is-open" : ""}`}>
+            <button
+              type="button"
+              id={triggerId}
+              className="skill-accordion__trigger"
+              aria-expanded={isOpen}
+              aria-controls={panelId}
+              onClick={() => onChange(isOpen ? null : module.id)}
+            >
+              <span className="skill-accordion__icon">{renderIcon(module.icon)}</span>
+              <span className="skill-accordion__number">{module.number}</span>
+              <span className="skill-accordion__text">
+                <span className="skill-accordion__title">{module.title}</span>
+                <span className="skill-accordion__tagline">{module.tagline}</span>
+              </span>
+              <span className="skill-accordion__toggle" aria-hidden="true">
+                {isOpen ? "−" : "+"}
+              </span>
+            </button>
+
+            <div
+              className="skill-accordion__panel-wrapper"
+              style={{ maxHeight: isOpen ? `${heights[index] ?? 600}px` : "0px" }}
+            >
+              <div
+                id={panelId}
+                role="region"
+                aria-labelledby={triggerId}
+                className="skill-accordion__panel"
+                ref={(el) => {
+                  panelRefs.current[index] = el;
+                }}
+              >
+                <p className="skill-panel__title">{module.panelTitle}</p>
+                <ul className="skill-panel__details">
+                  {module.details.map((detail) => (
+                    <li key={detail}>{detail}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

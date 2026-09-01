@@ -41,14 +41,16 @@
 
 .projects__track {
   display: flex;
+  flex-wrap: nowrap;
   gap: 20px;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   cursor: grab;
   padding-bottom: var(--space-2xs);
-  touch-action: pan-y;
+  touch-action: pan-x;
 }
 
 .projects__track:active {
