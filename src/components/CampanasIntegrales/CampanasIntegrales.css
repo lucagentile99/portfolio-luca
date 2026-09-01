@@ -1,0 +1,24 @@
+.campanas__phrase {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--fs-lg);
+  color: var(--color-accent);
+  margin-top: var(--space-2xs);
+}
+
+.campanas__grid {
+  display: grid;
+  gap: var(--space-lg);
+}
+
+@media (min-width: 720px) {
+  .campanas__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1080px) {
+  .campanas__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

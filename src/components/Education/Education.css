@@ -1,0 +1,214 @@
+/* Línea temporal vertical con nodos numerados */
+.education__timeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.education__timeline::before {
+  content: "";
+  position: absolute;
+  left: 21px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--color-accent), var(--color-border));
+}
+
+.education__node {
+  position: relative;
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: var(--space-md);
+  align-items: start;
+}
+
+.education__node-marker {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: var(--color-bg);
+  border: 2px solid var(--color-accent);
+  font-family: var(--font-label);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--color-accent-deep);
+}
+
+.education__card {
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.education__card.is-open {
+  border-color: var(--color-accent-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.education__heading {
+  font-size: inherit;
+}
+
+.education__trigger {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  column-gap: var(--space-xs);
+  row-gap: var(--space-3xs);
+  padding: var(--space-md);
+  text-align: left;
+  cursor: pointer;
+}
+
+.education__folder-icon {
+  display: flex;
+  color: var(--color-accent-strong);
+}
+
+.education__folder-name {
+  font-family: var(--font-label);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--color-accent-deep);
+}
+
+.education__toggle {
+  grid-row: 1;
+  grid-column: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: var(--radius-full);
+  border: var(--border-width) solid var(--color-border-strong);
+  color: var(--color-text-muted);
+  font-size: var(--fs-md);
+  line-height: 1;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.education__card.is-open .education__toggle {
+  border-color: var(--color-accent-strong);
+  color: var(--color-accent-strong);
+}
+
+.education__program {
+  grid-column: 1 / -1;
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.education__file-tag {
+  grid-column: 1 / -1;
+}
+
+.education__panel-wrapper {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height var(--transition-slow);
+}
+
+.education__panel {
+  position: relative;
+  z-index: 1;
+  padding: 0 var(--space-md) var(--space-md);
+}
+
+.education__panel-grid {
+  padding-top: var(--space-sm);
+  border-top: var(--border-width) dashed var(--color-border);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-lg);
+  opacity: 0;
+  transition: opacity var(--transition-slow);
+}
+
+.education__card.is-open .education__panel-grid {
+  opacity: 1;
+}
+
+.education__panel-copy {
+  flex: 1;
+  min-width: 0;
+}
+
+.education__description {
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+  max-width: 56ch;
+}
+
+.education__learnings {
+  margin-top: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+}
+
+.education__learnings li {
+  position: relative;
+  padding-left: var(--space-md);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.education__learnings li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.5em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--color-accent-strong);
+}
+
+.education__visual {
+  flex-shrink: 0;
+  display: none;
+}
+
+@media (min-width: 560px) {
+  .education__visual {
+    display: flex;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .education__panel-wrapper,
+  .education__toggle {
+    transition: none;
+  }
+}
+
+@media (min-width: 700px) {
+  .education__node {
+    grid-template-columns: 52px 1fr;
+  }
+
+  .education__node-marker {
+    width: 52px;
+    height: 52px;
+    font-size: var(--fs-sm);
+  }
+
+  .education__timeline::before {
+    left: 25px;
+  }
+}

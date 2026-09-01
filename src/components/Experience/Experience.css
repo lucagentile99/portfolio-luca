@@ -1,0 +1,164 @@
+.experience__timeline {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.experience__item {
+  padding: var(--space-md) var(--space-lg);
+}
+
+/* Melancia es la experiencia principal y actual: mayor presencia visual */
+.experience__item--primary {
+  border-color: var(--color-accent-strong);
+  border-width: 2px;
+}
+
+.experience__item.is-open {
+  box-shadow: var(--shadow-md);
+}
+
+.experience__heading {
+  display: block;
+}
+
+.experience__trigger {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm) var(--space-md);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  padding-block: var(--space-2xs);
+}
+
+.experience__trigger-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.experience__company {
+  font-size: var(--fs-lg);
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.experience__item--primary .experience__company {
+  font-size: var(--fs-xl);
+}
+
+.experience__role {
+  color: var(--color-accent-deep);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  margin-top: 2px;
+}
+
+.experience__trigger-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--space-2xs);
+}
+
+.experience__modality {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.experience__toggle {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: var(--fs-xl);
+  color: var(--color-accent-strong);
+  line-height: 1;
+}
+
+.experience__impact-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2xs);
+  margin-top: var(--space-2xs);
+}
+
+.experience__impact-tags li {
+  font-family: var(--font-label);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.02em;
+  color: var(--color-text-faint);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  border: var(--border-width) solid var(--color-border);
+}
+
+.experience__panel-wrapper {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height var(--transition-base);
+}
+
+.experience__panel {
+  padding-top: var(--space-md);
+}
+
+.experience__focus {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  margin-bottom: var(--space-md);
+  color: var(--color-accent-strong);
+}
+
+.experience__focus-logo {
+  width: 20px;
+  height: 20px;
+}
+
+.experience__focus-spark {
+  width: 46px;
+  height: 16px;
+  color: var(--color-accent-strong);
+  flex-shrink: 0;
+}
+
+.experience__focus-tag {
+  font-family: var(--font-label);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-full);
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent-deep);
+}
+
+.experience__summary {
+  color: var(--color-text-muted);
+  max-width: 68ch;
+  margin-bottom: var(--space-md);
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+  .experience__panel-wrapper {
+    transition: none;
+  }
+}
+
+@media (min-width: 700px) {
+  .experience__trigger-meta {
+    align-items: flex-end;
+  }
+}

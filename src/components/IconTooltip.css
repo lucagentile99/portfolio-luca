@@ -1,0 +1,95 @@
+.icon-tooltip {
+  position: relative;
+  display: inline-flex;
+}
+
+.icon-tooltip__trigger {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2xs);
+  background: none;
+  border: none;
+  padding: var(--space-2xs);
+  cursor: pointer;
+  color: inherit;
+  font-family: inherit;
+}
+
+.icon-tooltip__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.icon-tooltip__icon img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+}
+
+.icon-tooltip:hover .icon-tooltip__icon,
+.icon-tooltip__trigger:focus-visible .icon-tooltip__icon,
+.icon-tooltip.is-open .icon-tooltip__icon {
+  border-color: var(--color-accent-strong);
+  transform: translateY(-2px);
+}
+
+.icon-tooltip__label {
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-align: center;
+  max-width: 84px;
+}
+
+.icon-tooltip__meta {
+  font-family: var(--font-label);
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  color: var(--color-accent-deep);
+  text-align: center;
+  max-width: 100px;
+}
+
+.icon-tooltip__bubble {
+  --bubble-shift: 0px;
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(calc(-50% + var(--bubble-shift))) translateY(4px) scale(0.96);
+  width: max-content;
+  max-width: min(220px, 76vw);
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--color-brown-deep);
+  color: var(--color-on-dark-text);
+  font-size: var(--fs-xs);
+  line-height: 1.4;
+  text-align: left;
+  box-shadow: var(--shadow-md);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-base), transform var(--transition-base);
+  z-index: 5;
+}
+
+.icon-tooltip:hover .icon-tooltip__bubble,
+.icon-tooltip__trigger:focus-visible ~ .icon-tooltip__bubble,
+.icon-tooltip.is-open .icon-tooltip__bubble {
+  opacity: 1;
+  transform: translateX(calc(-50% + var(--bubble-shift))) translateY(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon-tooltip__icon,
+  .icon-tooltip__bubble {
+    transition: none;
+  }
+}

@@ -1,0 +1,127 @@
+/* Padding vertical propio, más ajustado que el resto de las secciones. */
+.section.contact {
+  padding-block: clamp(40px, 4vw, 48px);
+  position: relative;
+  overflow: hidden;
+}
+
+.contact__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.contact__title {
+  position: relative;
+  display: inline-block;
+  width: fit-content;
+  margin-top: var(--space-2xs);
+}
+
+.contact__title-accent {
+  font-family: var(--font-editorial);
+  font-style: italic;
+  color: var(--color-accent);
+}
+
+.contact__text {
+  margin-top: var(--space-md);
+  color: var(--color-text-muted);
+  font-size: var(--fs-md);
+  max-width: 48ch;
+}
+
+.section--dark .contact__text {
+  color: var(--color-on-dark-muted);
+}
+
+.contact__cta-panel {
+  position: relative;
+  overflow: hidden;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+@media (min-width: 640px) {
+  .contact__cta-panel {
+    padding: 32px;
+  }
+}
+
+/* Único recurso decorativo del panel: la carpeta celeste, en la esquina. */
+.contact__folder {
+  position: absolute;
+  bottom: -18px;
+  right: -14px;
+  width: 90px;
+  height: 66px;
+  background: linear-gradient(155deg, var(--color-accent) 0%, var(--color-accent-strong) 100%);
+  border-radius: 8px 20px 20px 20px;
+  opacity: 0.9;
+  z-index: 0;
+  transform: rotate(-6deg);
+}
+
+.contact__folder-tab {
+  position: absolute;
+  top: -10px;
+  left: 10px;
+  width: 42px;
+  height: 16px;
+  background-color: var(--color-accent);
+  border-radius: 8px 10px 0 0;
+}
+
+.contact__cta-email {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+}
+
+.contact__cta-secondary {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2xs);
+}
+
+.contact__cta-secondary .btn {
+  width: 100%;
+}
+
+.contact__copy-email {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--space-sm);
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--color-on-dark-muted);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.contact__copy-email:hover {
+  color: var(--color-accent);
+}
+
+@media (max-width: 640px) {
+  .contact__folder {
+    width: 64px;
+    height: 46px;
+  }
+}
+
+@media (min-width: 1000px) {
+  .contact__grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}

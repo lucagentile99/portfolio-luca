@@ -1,0 +1,128 @@
+.responsibility-grid {
+  margin-top: var(--space-md);
+}
+
+.responsibility-grid__label {
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: var(--fs-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-faint);
+  margin-bottom: var(--space-sm);
+}
+
+.responsibility-grid__primary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px;
+}
+
+.responsibility-card {
+  position: relative;
+  flex: 1 1 100%;
+  max-width: 100%;
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--color-border);
+  background-color: var(--color-bg-alt);
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  cursor: default;
+}
+
+.responsibility-card__dots {
+  position: absolute;
+  top: var(--space-sm);
+  right: var(--space-sm);
+  display: flex;
+  gap: 3px;
+}
+
+.responsibility-card__dots span {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background-color: var(--color-border-strong);
+}
+
+.responsibility-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.responsibility-card__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  color: var(--color-accent-deep);
+}
+
+.responsibility-card--celeste .responsibility-card__icon {
+  color: var(--color-accent-strong);
+}
+
+.responsibility-card--bordo .responsibility-card__icon {
+  color: var(--color-secondary);
+}
+
+.responsibility-card__number {
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.responsibility-card__keyword {
+  margin-top: var(--space-sm);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: var(--fs-md);
+  letter-spacing: -0.01em;
+  color: var(--color-text);
+}
+
+.responsibility-card__description {
+  margin-top: var(--space-3xs);
+  font-size: var(--fs-sm);
+  line-height: 1.4;
+  color: var(--color-text-muted);
+}
+
+@media (min-width: 560px) {
+  .responsibility-card {
+    flex-basis: calc(50% - 9px);
+    max-width: calc(50% - 9px);
+  }
+}
+
+@media (min-width: 860px) {
+  .responsibility-grid__primary--5 .responsibility-card {
+    flex-basis: calc(33.333% - 12px);
+    max-width: calc(33.333% - 12px);
+  }
+
+  .responsibility-grid__primary--4 .responsibility-card {
+    flex-basis: calc(50% - 9px);
+    max-width: calc(50% - 9px);
+  }
+}
+
+@media (min-width: 1100px) {
+  .responsibility-grid__primary--5 .responsibility-card {
+    flex-basis: calc(20% - 14.4px);
+    max-width: calc(20% - 14.4px);
+  }
+
+  .responsibility-grid__primary--4 .responsibility-card {
+    flex-basis: calc(25% - 13.5px);
+    max-width: calc(25% - 13.5px);
+  }
+}

@@ -1,0 +1,29 @@
+.lang-switch {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px;
+  border-radius: var(--radius-full);
+  border: var(--border-width) solid var(--color-border-strong);
+  background-color: var(--color-bg-alt);
+  flex-shrink: 0;
+}
+
+.lang-switch__option {
+  padding: 0.3rem 0.65rem;
+  border-radius: var(--radius-full);
+  font-family: var(--font-label);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--color-text-faint);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.lang-switch__option:hover {
+  color: var(--color-text);
+}
+
+.lang-switch__option.is-active {
+  background-color: var(--color-accent-strong);
+  color: var(--color-brown-black);
+}

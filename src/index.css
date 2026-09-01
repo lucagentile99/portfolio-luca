@@ -1,0 +1,667 @@
+/* ==========================================================================
+   Variables globales — editar acá para ajustar colores, tipografía y estilo
+   Paleta inspirada en un escritorio editorial: crema, marrón profundo y un
+   azul "carpeta" como acento interactivo.
+   ========================================================================== */
+:root {
+  /* Color */
+  --color-bg: #f3ebdd;
+  --color-bg-alt: #faf6ef;
+  --color-surface: #fffdf8;
+  --color-text: #211714;
+  --color-text-muted: #5c4a41;
+  --color-text-faint: #8a7469;
+  --color-border: rgba(33, 23, 20, 0.14);
+  --color-border-strong: rgba(33, 23, 20, 0.28);
+
+  --color-accent: #79b5d2;
+  --color-accent-strong: #3d7f9e;
+  --color-accent-contrast: #14170a;
+  --color-accent-soft: #d9ecf3;
+  /* Azul oscuro con contraste AA verificado (≥7.8:1) sobre fondos crema y
+     celeste-soft — usar para números, flechas y texto pequeño que necesite
+     leerse como "celeste" pero con más contraste que --color-accent-strong. */
+  --color-accent-deep: #1f4a5c;
+
+  --color-brown-deep: #3a1714;
+  --color-brown-black: #211714;
+  --color-secondary: #9a5148;
+
+  --color-danger: #c0392b;
+  --color-success: #2f7d4f;
+
+  /* En secciones oscuras: texto y bordes claros sobre marrón profundo */
+  --color-on-dark-text: #f3ebdd;
+  --color-on-dark-muted: #d8c4b8;
+  --color-on-dark-border: rgba(243, 235, 221, 0.2);
+  --color-on-dark-surface: #4a211d;
+
+  /* Tipografía */
+  --font-display: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-body: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-editorial: "Instrument Serif", "Georgia", serif;
+  /* Etiquetas editoriales (antes mono): misma sans que titulares/botones,
+     diferenciada por mayúsculas pequeñas + letter-spacing, no por familia. */
+  --font-label: "Plus Jakarta Sans", "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-md: 1.125rem;
+  --fs-lg: 1.375rem;
+  --fs-xl: 1.75rem;
+  --fs-2xl: clamp(2rem, 1.6rem + 1.6vw, 2.75rem);
+  --fs-3xl: clamp(2.75rem, 2rem + 3.2vw, 4.5rem);
+
+  --lh-tight: 1.05;
+  --lh-snug: 1.3;
+  --lh-normal: 1.6;
+
+  /* Espaciado */
+  --space-3xs: 0.25rem;
+  --space-2xs: 0.5rem;
+  --space-xs: 0.75rem;
+  --space-sm: 1rem;
+  --space-md: 1.5rem;
+  --space-lg: 2.5rem;
+  --space-xl: 4rem;
+  --space-2xl: 6rem;
+  --space-3xl: 8rem;
+
+  /* Layout */
+  --container-width: 1220px;
+  --container-padding: clamp(1.25rem, 4vw, 3rem);
+
+  /* Bordes y sombras */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 28px;
+  --radius-full: 999px;
+  --border-width: 1px;
+
+  --shadow-sm: 0 1px 2px rgba(33, 23, 20, 0.08);
+  --shadow-md: 0 10px 28px rgba(33, 23, 20, 0.1);
+  --shadow-lg: 0 24px 56px rgba(33, 23, 20, 0.16);
+
+  /* Movimiento */
+  --transition-fast: 150ms ease;
+  --transition-base: 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-slow: 520ms cubic-bezier(0.22, 1, 0.36, 1);
+
+  --header-height: 76px;
+
+  color-scheme: light;
+}
+
+/* ==========================================================================
+   Reset
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-height) + 12px);
+}
+
+body {
+  min-height: 100svh;
+  overflow-x: hidden;
+  font-family: var(--font-body);
+  font-size: var(--fs-base);
+  line-height: var(--lh-normal);
+  color: var(--color-text);
+  background-color: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img,
+picture,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+  padding: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-display);
+  line-height: var(--lh-tight);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+#root {
+  overflow-x: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   Accesibilidad
+   ========================================================================== */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.skip-link {
+  position: fixed;
+  top: -100%;
+  left: var(--space-sm);
+  z-index: 1000;
+  padding: var(--space-2xs) var(--space-sm);
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+  top: var(--space-sm);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-strong);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* ==========================================================================
+   Layout utilitario
+   ========================================================================== */
+.container {
+  width: 100%;
+  max-width: var(--container-width);
+  margin-inline: auto;
+  padding-inline: var(--container-padding);
+}
+
+.section {
+  padding-block: clamp(2.5rem, 2rem + 1.6vw, 3.75rem);
+  scroll-margin-top: var(--header-height);
+}
+
+.section--alt {
+  background-color: var(--color-bg-alt);
+}
+
+.section--dark {
+  background-color: var(--color-brown-deep);
+  color: var(--color-on-dark-text);
+}
+
+.section--dark .section-subtitle,
+.section--dark .eyebrow {
+  color: var(--color-on-dark-muted);
+}
+
+.section-head {
+  max-width: 640px;
+  margin-bottom: var(--space-lg);
+}
+
+.section-head--center {
+  max-width: 720px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-sm);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.eyebrow-editorial {
+  display: block;
+  font-family: var(--font-editorial);
+  font-style: italic;
+  font-size: var(--fs-xl);
+  color: var(--color-accent-strong);
+  margin-bottom: var(--space-2xs);
+}
+
+.section--dark .eyebrow-editorial {
+  color: var(--color-accent);
+}
+
+.section-title {
+  font-size: var(--fs-2xl);
+  letter-spacing: -0.01em;
+}
+
+.section-subtitle {
+  margin-top: var(--space-sm);
+  color: var(--color-text-muted);
+  font-size: var(--fs-md);
+}
+
+.section-number {
+  font-family: var(--font-label);
+  font-size: var(--fs-sm);
+  color: var(--color-text-faint);
+  margin-bottom: var(--space-sm);
+}
+
+.section--dark .section-number {
+  color: var(--color-on-dark-muted);
+}
+
+/* ==========================================================================
+   Botones
+   ========================================================================== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  padding: 0.85rem 1.6rem;
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  border: var(--border-width) solid transparent;
+  transition: transform var(--transition-fast), background-color var(--transition-fast),
+    border-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background-color: var(--color-brown-black);
+  color: var(--color-bg);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:hover {
+  background-color: var(--color-brown-deep);
+  box-shadow: var(--shadow-md);
+}
+
+.section--dark .btn-primary {
+  background-color: var(--color-accent);
+  color: var(--color-brown-black);
+}
+
+.section--dark .btn-primary:hover {
+  background-color: var(--color-accent-soft);
+}
+
+.btn-secondary {
+  background-color: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-accent-strong);
+  color: var(--color-on-dark-text);
+}
+
+.btn-outline {
+  background-color: transparent;
+  border-color: var(--color-border-strong);
+  color: var(--color-text);
+}
+
+.btn-outline:hover {
+  border-color: var(--color-text);
+  background-color: var(--color-surface);
+}
+
+.section--dark .btn-outline {
+  border-color: var(--color-on-dark-border);
+  color: var(--color-on-dark-text);
+}
+
+.section--dark .btn-outline:hover {
+  border-color: var(--color-on-dark-text);
+  background-color: var(--color-on-dark-surface);
+}
+
+.btn-link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3xs);
+  font-weight: 600;
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+  padding-block: var(--space-2xs);
+  border-bottom: 1px solid var(--color-border-strong);
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.btn-link:hover {
+  color: var(--color-accent-strong);
+  border-color: var(--color-accent-strong);
+}
+
+.section--dark .btn-link {
+  color: var(--color-on-dark-text);
+  border-color: var(--color-on-dark-border);
+}
+
+.btn-sm {
+  padding: 0.6rem 1.15rem;
+  font-size: var(--fs-xs);
+}
+
+/* ==========================================================================
+   Tarjetas, folders y elementos de dashboard
+   ========================================================================== */
+.card {
+  background-color: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
+}
+
+.section--dark .card {
+  background-color: var(--color-on-dark-surface);
+  border-color: var(--color-on-dark-border);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+  border: var(--border-width) solid var(--color-border-strong);
+  font-size: var(--fs-xs);
+  font-family: var(--font-label);
+  color: var(--color-text-muted);
+}
+
+.section--dark .tag {
+  border-color: var(--color-on-dark-border);
+  color: var(--color-on-dark-muted);
+}
+
+.folder-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.35rem 0.85rem 0.35rem 0.6rem;
+  border-radius: 3px 10px 10px 10px;
+  background-color: var(--color-accent);
+  color: var(--color-brown-black);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: var(--shadow-sm);
+}
+
+.folder-tag::before {
+  content: "";
+  width: 10px;
+  height: 8px;
+  border-radius: 2px 4px 4px 4px;
+  background-color: rgba(33, 23, 20, 0.25);
+}
+
+.badge-academic {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+  background-color: var(--color-secondary);
+  color: var(--color-bg);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+  background-color: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+}
+
+.section--dark .badge-status {
+  background-color: rgba(121, 181, 210, 0.2);
+  color: var(--color-accent);
+}
+
+/* ==========================================================================
+   Sistema de "archivo creativo" — recursos reutilizables en toda la web
+   (carpetas, ventanas, pestañas de archivo, asteriscos, inclinación).
+   Usar estos en vez de inventar un recurso nuevo por sección.
+   ========================================================================== */
+
+/* Pestaña de nombre de archivo, ej. "strategy_01.file" */
+.file-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-family: var(--font-label);
+  font-size: var(--fs-xs);
+  letter-spacing: 0.02em;
+  color: var(--color-text-faint);
+}
+
+.file-tag::before {
+  content: "";
+  width: 9px;
+  height: 7px;
+  flex-shrink: 0;
+  border-radius: 1px 3px 3px 3px;
+  background-color: var(--color-accent-strong);
+}
+
+.section--dark .file-tag {
+  color: var(--color-on-dark-muted);
+}
+
+/* Barra superior tipo ventana de aplicación, con "semáforo" sutil */
+.window-chrome {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  border-bottom: var(--border-width) solid var(--color-border);
+  background-color: var(--color-bg-alt);
+}
+
+.window-chrome__dots {
+  display: flex;
+  gap: 5px;
+}
+
+.window-chrome__dots span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--color-border-strong);
+}
+
+.window-chrome__title {
+  margin-left: auto;
+  font-family: var(--font-label);
+  font-size: var(--fs-xs);
+  color: var(--color-text-faint);
+  letter-spacing: 0.02em;
+}
+
+.section--dark .window-chrome {
+  background-color: rgba(243, 235, 221, 0.05);
+  border-color: var(--color-on-dark-border);
+}
+
+.section--dark .window-chrome__title {
+  color: var(--color-on-dark-muted);
+}
+
+/* Asterisco decorativo, chico y editorial */
+.mark-asterisk {
+  display: inline-block;
+  color: var(--color-accent-strong);
+  font-family: var(--font-display);
+  line-height: 1;
+}
+
+/* Inclinación leve para tarjetas/piezas superpuestas */
+.tilt-left {
+  transform: rotate(-1.5deg);
+}
+
+.tilt-right {
+  transform: rotate(1.5deg);
+}
+
+/* Número de proyecto/módulo grande, editorial */
+.index-number {
+  font-family: var(--font-label);
+  color: var(--color-text-faint);
+  letter-spacing: -0.02em;
+}
+
+/* ==========================================================================
+   Animaciones de entrada
+   ========================================================================== */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity var(--transition-slow), transform var(--transition-slow);
+  will-change: opacity, transform;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Titulares: revelado por máscara (wipe vertical), sin mover el layout */
+.reveal--mask {
+  opacity: 1;
+  transform: none;
+  clip-path: inset(0 0 100% 0);
+  transition: clip-path var(--transition-slow);
+}
+
+.reveal--mask.is-visible {
+  clip-path: inset(0 0 0% 0);
+}
+
+/* Fotos: recorte leve + fade + desplazamiento sutil, como si se revelara un documento */
+.reveal--photo {
+  opacity: 0;
+  clip-path: inset(5% 5% 5% 5%);
+  transform: translateY(18px) scale(1.015);
+  transition: opacity var(--transition-slow), clip-path var(--transition-slow), transform var(--transition-slow);
+}
+
+.reveal--photo.is-visible {
+  opacity: 1;
+  clip-path: inset(0% 0% 0% 0%);
+  transform: translateY(0) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal,
+  .reveal--mask,
+  .reveal--photo {
+    opacity: 1;
+    transform: none;
+    clip-path: none;
+    transition: none;
+  }
+}
+
+/* ==========================================================================
+   Grillas responsivas base
+   ========================================================================== */
+@media (max-width: 640px) {
+  .section {
+    padding-block: var(--space-lg);
+  }
+}

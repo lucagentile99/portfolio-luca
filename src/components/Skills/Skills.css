@@ -1,0 +1,180 @@
+/* ==========================================================================
+   Tool stack — herramientas agrupadas (Paid Media / Organización /
+   Creatividad / IA), cada grupo con su propia fila corta de íconos con
+   tooltip — evita una única fila interminable.
+   ========================================================================== */
+.tool-stack {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.tool-stack__subtitle {
+  margin-top: var(--space-2xs);
+  color: var(--color-text-muted);
+  font-size: var(--fs-md);
+}
+
+/* Grilla simétrica 2×2: 4 módulos de igual tamaño (Paid Media /
+   Organización / Creatividad / IA), cada uno con 3 herramientas en una
+   sola fila — en mobile, una categoría por fila, pero siempre 3 íconos
+   alineados adentro (nunca se envuelven a una segunda fila). */
+.tool-stack__grid {
+  margin-top: var(--space-md);
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+@media (min-width: 640px) {
+  .tool-stack__grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+  }
+}
+
+.tool-stack__module {
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  transition: border-color var(--transition-fast);
+}
+
+.tool-stack__module:hover,
+.tool-stack__module:focus-within {
+  border-color: var(--color-accent-strong);
+}
+
+.tool-stack__module-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+  margin-bottom: var(--space-md);
+}
+
+.tool-stack__module-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2xs);
+  margin-top: auto;
+}
+
+.tool-stack__module-row .icon-tooltip {
+  display: flex;
+  width: 100%;
+}
+
+.tool-stack__module-row .icon-tooltip__trigger {
+  width: 100%;
+  padding-inline: 0;
+}
+
+.tool-stack__module-row .icon-tooltip__icon {
+  margin-inline: auto;
+}
+
+.tool-stack__module-row .icon-tooltip__label {
+  max-width: 100%;
+  min-height: calc(var(--fs-xs) * 1.3 * 2);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.3;
+}
+
+.languages {
+  margin-top: var(--space-lg);
+  padding-top: var(--space-md);
+  border-top: var(--border-width) solid var(--color-border);
+}
+
+.languages__head {
+  max-width: 560px;
+  margin-bottom: var(--space-sm);
+}
+
+.languages__head h3 {
+  font-size: var(--fs-xl);
+  font-weight: 800;
+}
+
+.languages__intro {
+  margin-top: var(--space-3xs);
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+}
+
+.languages__row {
+  margin-top: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  border-radius: var(--radius-md);
+  border: var(--border-width) solid var(--color-border);
+  background-color: var(--color-surface);
+}
+
+.language-card {
+  padding: var(--space-md) var(--space-lg);
+}
+
+.language-card h4 {
+  font-family: var(--font-display);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+}
+
+.language-card__level {
+  margin-top: 2px;
+  font-family: var(--font-label);
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-accent-deep);
+}
+
+.language-card__scale {
+  display: flex;
+  gap: 5px;
+  margin-top: var(--space-sm);
+  max-width: 220px;
+}
+
+.language-card__scale span {
+  height: 6px;
+  flex: 1;
+  border-radius: var(--radius-full);
+  background-color: var(--color-border-strong);
+}
+
+.language-card__scale span.is-filled {
+  background-color: var(--color-accent-strong);
+}
+
+.language-card__description {
+  margin-top: var(--space-sm);
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+  max-width: 42ch;
+}
+
+@media (min-width: 640px) {
+  .languages__row {
+    flex-direction: row;
+  }
+
+  .language-card {
+    flex: 1;
+    padding: var(--space-lg);
+  }
+
+  .language-card:first-child {
+    border-right: var(--border-width) solid var(--color-border);
+  }
+}
