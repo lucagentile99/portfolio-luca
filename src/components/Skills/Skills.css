@@ -40,12 +40,27 @@
   border-radius: var(--radius-md);
   background-color: var(--color-surface);
   border: var(--border-width) solid var(--color-border);
-  transition: border-color var(--transition-fast);
+  transition: border-color var(--transition-fast), transform var(--transition-base), box-shadow var(--transition-base);
 }
 
-.tool-stack__module:hover,
 .tool-stack__module:focus-within {
   border-color: var(--color-accent-strong);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .tool-stack__module:hover {
+    border-color: var(--color-accent-strong);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tool-stack__module,
+  .tool-stack__module:hover {
+    transition: none;
+    transform: none;
+  }
 }
 
 .tool-stack__module-title {

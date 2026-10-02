@@ -608,52 +608,20 @@ p {
 /* ==========================================================================
    Animaciones de entrada
    ========================================================================== */
-.reveal {
-  opacity: 0;
-  transform: translateY(24px);
-  transition: opacity var(--transition-slow), transform var(--transition-slow);
-  will-change: opacity, transform;
-}
+/* El movimiento lo hace anime.js (components/Reveal.tsx y los scopes de
+   cada componente). Acá solo vive el estado inicial oculto, para que no
+   haya parpadeo antes de que corra el JS. Solo aplica sin reduced motion:
+   con reduced motion todo se muestra directamente en su estado final. */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal:not([data-revealed]):not(.reveal--stagger):not(.reveal--mask),
+  .reveal--stagger:not([data-revealed]) > *,
+  [data-motion="intro"]:not([data-revealed]) {
+    opacity: 0;
+  }
 
-.reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Titulares: revelado por máscara (wipe vertical), sin mover el layout */
-.reveal--mask {
-  opacity: 1;
-  transform: none;
-  clip-path: inset(0 0 100% 0);
-  transition: clip-path var(--transition-slow);
-}
-
-.reveal--mask.is-visible {
-  clip-path: inset(0 0 0% 0);
-}
-
-/* Fotos: recorte leve + fade + desplazamiento sutil, como si se revelara un documento */
-.reveal--photo {
-  opacity: 0;
-  clip-path: inset(5% 5% 5% 5%);
-  transform: translateY(18px) scale(1.015);
-  transition: opacity var(--transition-slow), clip-path var(--transition-slow), transform var(--transition-slow);
-}
-
-.reveal--photo.is-visible {
-  opacity: 1;
-  clip-path: inset(0% 0% 0% 0%);
-  transform: translateY(0) scale(1);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .reveal,
-  .reveal--mask,
-  .reveal--photo {
-    opacity: 1;
-    transform: none;
-    clip-path: none;
-    transition: none;
+  /* Titulares: barrido vertical, sin mover el layout */
+  .reveal--mask:not([data-revealed]) {
+    clip-path: inset(0 0 100% 0);
   }
 }
 

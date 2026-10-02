@@ -1,8 +1,9 @@
-import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { useId, useState } from "react";
 import { experienceEntries as experienceEntriesEs } from "../../data/experience";
 import { experienceEntries as experienceEntriesEn } from "../../data/experience.en";
 import { assetUrl } from "../../utils/assetPath";
 import { useLocalized, useT } from "../../i18n/LanguageContext";
+import Collapse from "../Collapse";
 import Reveal from "../Reveal";
 import ResponsibilityGrid from "./ResponsibilityGrid";
 import "./Experience.css";
@@ -10,20 +11,8 @@ import "./Experience.css";
 export default function Experience() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const baseId = useId();
-  const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [panelHeights, setPanelHeights] = useState<number[]>([]);
   const t = useT();
   const experienceEntries = useLocalized(experienceEntriesEs, experienceEntriesEn);
-
-  useLayoutEffect(() => {
-    setPanelHeights(panelRefs.current.map((el) => el?.scrollHeight ?? 0));
-  }, [openIndex]);
-
-  useEffect(() => {
-    const measure = () => setPanelHeights(panelRefs.current.map((el) => el?.scrollHeight ?? 0));
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
 
   return (
     <section id="experiencia" className="section section--alt experience">
@@ -33,7 +22,7 @@ export default function Experience() {
           <h2 className="section-title">{t.experience.title}</h2>
         </Reveal>
 
-        <ol className="experience__timeline">
+        <Reveal as="ol" className="experience__timeline" stagger>
           {experienceEntries.map((entry, index) => {
             const isOpen = openIndex === index;
             const triggerId = `${baseId}-exp-trigger-${index}`;
@@ -41,10 +30,8 @@ export default function Experience() {
 
             return (
               <li key={entry.id}>
-                <Reveal
-                  as="article"
+                <article
                   className={`experience__item card ${entry.focusTag ? "experience__item--primary" : ""} ${isOpen ? "is-open" : ""}`}
-                  delay={index * 60}
                 >
                   <h3 className="experience__heading">
                     <button
@@ -75,19 +62,8 @@ export default function Experience() {
                     ))}
                   </ul>
 
-                  <div
-                    className="experience__panel-wrapper"
-                    style={{ maxHeight: isOpen ? `${panelHeights[index] ?? 1200}px` : "0px" }}
-                  >
-                    <div
-                      className="experience__panel"
-                      id={panelId}
-                      role="region"
-                      aria-labelledby={triggerId}
-                      ref={(el) => {
-                        panelRefs.current[index] = el;
-                      }}
-                    >
+                  <Collapse open={isOpen} id={panelId} role="region" aria-labelledby={triggerId}>
+                    <div className="experience__panel">
                       {entry.focusTag && (
                         <div className="experience__focus" aria-hidden="true">
                           <img src={assetUrl("/images/logos/meta.svg")} alt="" className="experience__focus-logo" />
@@ -110,12 +86,12 @@ export default function Experience() {
 
                       <ResponsibilityGrid modules={entry.responsibilities} />
                     </div>
-                  </div>
-                </Reveal>
+                  </Collapse>
+                </article>
               </li>
             );
           })}
-        </ol>
+        </Reveal>
       </div>
     </section>
   );

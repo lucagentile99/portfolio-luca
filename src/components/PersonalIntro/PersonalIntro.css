@@ -81,10 +81,6 @@
   filter: drop-shadow(0 2px 3px rgba(20, 14, 12, 0.5));
 }
 
-.personal-intro__filename {
-  color: var(--color-text-faint);
-}
-
 .personal-intro__content {
   min-width: 0;
 }
@@ -224,10 +220,9 @@
   color: var(--color-accent-strong);
 }
 
-.about__pillar-panel-wrapper {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height var(--transition-slow);
+/* Altura, opacidad y desplazamiento los anima anime.js (components/Collapse.tsx) */
+.about__pillar-panel[hidden] {
+  display: none;
 }
 
 .about__pillar-panel-inner {
@@ -238,11 +233,13 @@
   padding-top: var(--space-sm);
 }
 
+/* Bajada del panel: claramente secundaria respecto del título de la tarjeta */
 .about__pillar-lead {
   font-family: var(--font-editorial);
   font-style: italic;
-  font-size: var(--fs-md);
-  color: var(--color-text);
+  font-size: var(--fs-sm);
+  line-height: var(--lh-snug);
+  color: var(--color-accent-deep);
 }
 
 .about__pillar-body {
@@ -277,16 +274,26 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .about__pillar-panel-wrapper,
   .about__pillar-toggle {
     transition: none;
+  }
+}
+
+/* Tablet y desktop: foto a la izquierda, contenido a la derecha */
+@media (min-width: 700px) {
+  .personal-intro__grid {
+    grid-template-columns: minmax(200px, 240px) 1fr;
+    align-items: start;
+  }
+
+  .personal-intro__frame {
+    width: 100%;
   }
 }
 
 @media (min-width: 860px) {
   .personal-intro__grid {
     grid-template-columns: 320px 1fr;
-    align-items: start;
   }
 
   .personal-intro__frame {

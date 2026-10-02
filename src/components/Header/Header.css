@@ -12,6 +12,25 @@
   transition: border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
+/* Progreso de lectura: anime.js escala esta línea con el scroll */
+.header__progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background-color: var(--color-accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header__progress {
+    display: none;
+  }
+}
+
 .header--scrolled {
   border-bottom-color: var(--color-border);
   box-shadow: var(--shadow-sm);
@@ -52,6 +71,7 @@
 }
 
 .header__nav ul {
+  position: relative;
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
@@ -86,9 +106,22 @@
   color: var(--color-text);
 }
 
-.header__nav a:hover::after,
-.header__nav a.is-active::after {
+.header__nav a:not(.is-active):hover::after {
   transform: scaleX(1);
+}
+
+/* Indicador del link activo: una sola línea que anime.js desliza (x) y
+   escala (scaleX sobre un ancho base de 100px) hasta el link activo. */
+.header__nav-indicator {
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100px;
+  height: 2px;
+  background-color: var(--color-accent-strong);
+  transform-origin: left center;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .header__nav a.is-active {
@@ -160,13 +193,12 @@
 }
 
 /* ==========================================================================
-   Menú mobile — overlay de pantalla completa, opaco, siempre por encima de
-   todo (header, hero, cualquier sección). No se renderiza en absoluto
-   cuando está cerrado (display:none), así que nunca puede dejar ver nada
-   detrás ni a mitad de una transición.
+   Menú mobile — capa de pantalla completa, opaca, montada en <body> (portal)
+   para quedar siempre por encima de todo el contenido. Solo existe en el DOM
+   mientras está abierto o cerrándose; la entrada/salida la anima anime.js.
    ========================================================================== */
 .header__mobile {
-  display: none;
+  display: flex;
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -175,10 +207,6 @@
   flex-direction: column;
   padding: 0 var(--container-padding) var(--space-lg);
   overflow-y: auto;
-}
-
-.header__mobile.is-open {
-  display: flex;
 }
 
 .header__mobile-top {
@@ -205,7 +233,6 @@
 
 .header__mobile-nav {
   margin-top: var(--space-md);
-  animation: header-mobile-content-in var(--transition-base) both;
 }
 
 .header__mobile-nav ul {
@@ -234,8 +261,6 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--space-sm);
-  animation: header-mobile-content-in var(--transition-base) both;
-  animation-delay: 40ms;
 }
 
 .header__mobile-lang .lang-switch__option {
@@ -248,24 +273,6 @@
   color: var(--color-text-muted);
   text-decoration: underline;
   text-underline-offset: 3px;
-}
-
-@keyframes header-mobile-content-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .header__mobile-nav,
-  .header__mobile-actions {
-    animation: none;
-  }
 }
 
 @media (min-width: 1040px) {

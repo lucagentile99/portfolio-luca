@@ -1,39 +1,38 @@
-.case-modal__backdrop {
+/* Capa montada en <body> (portal): siempre por encima del header y del
+   resto del contenido. La apertura/cierre la anima anime.js. */
+.case-modal__layer {
   position: fixed;
   inset: 0;
   z-index: 200;
+}
+
+.case-modal__backdrop {
+  position: absolute;
+  inset: 0;
   background-color: rgba(33, 23, 20, 0.55);
 }
 
+/* Mobile: pantalla completa. Desktop: panel centrado con margen, así hay
+   un "afuera" real para cerrar con clic. */
 .case-modal {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  width: 100vw;
-  height: 100dvh;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
   background-color: var(--color-surface);
-  /* El modal puede montarse dentro de una sección oscura (Campañas
-     académicas): siempre fija su propio color de texto claro/oscuro para
-     no heredar el color de la sección y perder contraste. */
+  /* Siempre fija su propio color de texto: no hereda el de la sección
+     oscura (Campañas académicas) donde se abre. */
   color: var(--color-text);
-  animation: case-modal-in var(--transition-base);
 }
 
-@keyframes case-modal-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
+@media (min-width: 900px) {
   .case-modal {
-    animation: none;
+    inset: 24px;
+    width: min(1040px, calc(100% - 48px));
+    margin-inline: auto;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
   }
 }
 
@@ -67,6 +66,7 @@
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
+  overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
 }
 

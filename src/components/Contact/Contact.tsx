@@ -26,7 +26,7 @@ export default function Contact() {
       <div className="container contact__grid">
         <Reveal as="div" className="contact__intro">
           <p className="eyebrow">{t.contact.eyebrow}</p>
-          <h2 className="section-title contact__title reveal--mask">
+          <h2 className="section-title contact__title">
             {t.contact.titleLead} <em className="contact__title-accent">{t.contact.titleAccent}</em>
             {t.contact.titleEnd}
           </h2>

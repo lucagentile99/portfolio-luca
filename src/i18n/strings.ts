@@ -88,6 +88,8 @@ export const strings = {
       eyebrow: "integrated campaigns",
       title: "Proyectos académicos",
       badge: "Académico",
+      carouselAria: "Carrusel de proyectos académicos, usá las flechas del teclado para navegar",
+      goToProject: (n: number) => `Ir al proyecto ${n}`,
     },
     caseModal: {
       closeCase: "Cerrar caso",
@@ -207,6 +209,8 @@ export const strings = {
       eyebrow: "integrated campaigns",
       title: "Academic projects",
       badge: "Academic",
+      carouselAria: "Academic projects carousel, use the arrow keys to navigate",
+      goToProject: (n: number) => `Go to project ${n}`,
     },
     caseModal: {
       closeCase: "Close case",

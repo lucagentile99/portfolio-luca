@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { caseStudies as caseStudiesEs } from "../../data/projects";
 import { caseStudies as caseStudiesEn } from "../../data/projects.en";
 import { caseStudyToModalContent } from "../../utils/caseModal";
 import { assetUrl } from "../../utils/assetPath";
 import { useLocalized, useT } from "../../i18n/LanguageContext";
+import { useCarousel } from "../../hooks/useCarousel";
 import Reveal from "../Reveal";
 import CaseModal from "./CaseModal";
+import { CarouselProgress } from "./CarouselIndicators";
 import { PerformanceCoverMini } from "./PerformanceVisual";
 import "./Projects.css";
 
@@ -13,21 +15,11 @@ function triggerId(id: string) {
   return `case-trigger-${id}`;
 }
 
-function prefersReducedMotion() {
-  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-}
-
 export default function Projects() {
   const t = useT();
   const caseStudies = useLocalized(caseStudiesEs, caseStudiesEn);
   const [openCaseId, setOpenCaseId] = useState<string | null>(null);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [hasInteracted, setHasInteracted] = useState(false);
-  const trackRef = useRef<HTMLDivElement>(null);
-  // `dragging` solo se confirma (y solo entonces se activa pointer capture)
-  // cuando el desplazamiento supera el umbral — así un click/tap normal
-  // nunca queda bloqueado por haber pasado por pointerdown/pointerup.
-  const dragState = useRef({ pointerId: null as number | null, startX: 0, startScroll: 0, dragging: false });
+  const { trackProps, activeIndex, hasInteracted, go, consumeDrag } = useCarousel(".projects__slide");
 
   const activeCases = useMemo(() => caseStudies.filter((c) => c.active !== false), [caseStudies]);
 
@@ -38,7 +30,7 @@ export default function Projects() {
     const id = openCaseId;
     setOpenCaseId(null);
     if (id) {
-      document.getElementById(triggerId(id))?.focus();
+      document.getElementById(triggerId(id))?.focus({ preventScroll: true });
     }
   };
 
@@ -48,108 +40,15 @@ export default function Projects() {
       ? () => setOpenCaseId(activeCases[openIndex + 1].id)
       : undefined;
 
-  const getSlides = () => Array.from(trackRef.current?.querySelectorAll<HTMLElement>(".projects__slide") ?? []);
-
-  const scrollToIndex = useCallback((index: number) => {
-    const track = trackRef.current;
-    if (!track) return;
-    const slides = getSlides();
-    const clamped = Math.max(0, Math.min(index, slides.length - 1));
-    const card = slides[clamped];
-    if (card) {
-      track.scrollTo({ left: card.offsetLeft, behavior: prefersReducedMotion() ? "auto" : "smooth" });
-    }
-  }, []);
-
-  // Mantiene el contador/progreso sincronizados con el scroll manual (drag/swipe).
-  useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    let frame = 0;
-    const onScroll = () => {
-      cancelAnimationFrame(frame);
-      frame = requestAnimationFrame(() => {
-        const slides = getSlides();
-        let closest = 0;
-        let closestDist = Infinity;
-        slides.forEach((slide, i) => {
-          const dist = Math.abs(slide.offsetLeft - track.scrollLeft);
-          if (dist < closestDist) {
-            closestDist = dist;
-            closest = i;
-          }
-        });
-        setActiveIndex(closest);
-      });
-    };
-    track.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      track.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(frame);
-    };
-  }, []);
-
-  const markInteracted = () => setHasInteracted(true);
-
-  const onPointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (event.pointerType === "touch") return; // el touch ya hace scroll nativo
-    const track = trackRef.current;
-    if (!track) return;
-    dragState.current = { pointerId: event.pointerId, startX: event.clientX, startScroll: track.scrollLeft, dragging: false };
-  };
-
-  const onPointerMove = (event: React.PointerEvent<HTMLDivElement>) => {
-    const track = trackRef.current;
-    const state = dragState.current;
-    if (state.pointerId !== event.pointerId || !track) return;
-    const dx = event.clientX - state.startX;
-    if (!state.dragging) {
-      // Todavía no se confirma como arrastre: no tocar el scroll ni
-      // capturar el puntero, para no interferir con un click/tap normal.
-      if (Math.abs(dx) <= 6) return;
-      state.dragging = true;
-      markInteracted();
-      track.setPointerCapture(event.pointerId);
-    }
-    track.scrollLeft = state.startScroll - dx;
-  };
-
-  const endDrag = (event: React.PointerEvent<HTMLDivElement>) => {
-    if (dragState.current.pointerId === event.pointerId) {
-      dragState.current.pointerId = null;
-    }
-  };
-
-  const onKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === "ArrowRight") {
-      event.preventDefault();
-      markInteracted();
-      scrollToIndex(activeIndex + 1);
-    } else if (event.key === "ArrowLeft") {
-      event.preventDefault();
-      markInteracted();
-      scrollToIndex(activeIndex - 1);
-    }
-  };
-
-  const onProgressClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const ratio = (event.clientX - rect.left) / rect.width;
-    const index = Math.round(ratio * (activeCases.length - 1));
-    markInteracted();
-    scrollToIndex(index);
-  };
-
   const openProject = (id: string) => {
-    if (dragState.current.dragging) {
-      dragState.current.dragging = false;
-      return;
-    }
+    if (consumeDrag()) return;
     setOpenCaseId(id);
   };
 
+  // Toda la tarjeta abre el proyecto: el botón "Abrir proyecto" es el único
+  // control real y su ::after se estira sobre la tarjeta (un solo tab stop).
   const renderCard = (project: (typeof activeCases)[number], index: number) => (
-    <Reveal as="article" key={project.id} className="case-card card projects__slide" delay={Math.min(index, 4) * 60}>
+    <Reveal as="article" key={project.id} className="case-card card projects__slide" delay={Math.min(index, 3) * 60}>
       <div className={`case-card__image ${index % 2 === 1 ? "case-card__image--celeste" : ""}`}>
         {project.gallery[0] ? (
           <img src={assetUrl(project.gallery[0].src)} alt={project.gallery[0].alt} loading="lazy" draggable={false} />
@@ -172,11 +71,7 @@ export default function Projects() {
           </span>
           {project.statusLabel && <span className="badge-status">{project.statusLabel}</span>}
         </div>
-        <h3 className="case-card__title">
-          <button type="button" id={triggerId(project.id)} className="case-card__title-btn" onClick={() => openProject(project.id)}>
-            {project.name}
-          </button>
-        </h3>
+        <h3 className="case-card__title">{project.name}</h3>
         <p className="case-card__description">{project.cardDescription}</p>
         <div className="case-card__tags">
           {project.cardTags.slice(0, 2).map((tag) => (
@@ -186,27 +81,19 @@ export default function Projects() {
           ))}
         </div>
         <div className="case-card__footer">
-          <span className="btn btn-primary case-card__cta" aria-hidden="true">
+          <button
+            type="button"
+            id={triggerId(project.id)}
+            className="btn btn-primary case-card__cta case-card__open"
+            aria-label={t.projects.openProjectAria(project.name)}
+            onClick={() => openProject(project.id)}
+          >
             {t.projects.openProject}
-          </span>
+          </button>
         </div>
       </div>
     </Reveal>
   );
-
-  const progressPercent = activeCases.length > 1 ? (activeIndex / (activeCases.length - 1)) * 100 : 100;
-
-  const prevDisabled = activeIndex === 0;
-  const nextDisabled = activeIndex === activeCases.length - 1;
-
-  const handlePrev = () => {
-    markInteracted();
-    scrollToIndex(activeIndex - 1);
-  };
-  const handleNext = () => {
-    markInteracted();
-    scrollToIndex(activeIndex + 1);
-  };
 
   return (
     <section id="proyectos" className="section projects">
@@ -226,43 +113,34 @@ export default function Projects() {
               <span className="projects__hint-desktop">{t.projects.hintDesktop}</span>
               <span className="projects__hint-mobile">{t.projects.hintMobile}</span>
             </p>
-            <button
-              type="button"
-              className="projects__progress"
-              aria-label={t.projects.progressAria}
-              onClick={onProgressClick}
-            >
-              <span className="projects__progress-fill" style={{ width: `${progressPercent}%` }} />
-            </button>
+            <CarouselProgress activeIndex={activeIndex} total={activeCases.length} label={t.projects.progressAria} onSelect={go} />
           </div>
         </Reveal>
       </div>
 
       <div className="projects__carousel">
-        <button type="button" className="projects__side-arrow projects__side-arrow--prev" onClick={handlePrev} disabled={prevDisabled}>
+        <button
+          type="button"
+          className="projects__side-arrow projects__side-arrow--prev"
+          onClick={() => go(activeIndex - 1)}
+          disabled={activeIndex === 0}
+        >
           <span className="visually-hidden">{t.projects.prevProject}</span>
           <span aria-hidden="true">←</span>
         </button>
 
-        <div
-          ref={trackRef}
-          className="projects__track"
-          role="region"
-          aria-label={t.projects.carouselAria}
-          tabIndex={0}
-          onPointerDown={onPointerDown}
-          onPointerMove={onPointerMove}
-          onPointerUp={endDrag}
-          onPointerLeave={endDrag}
-          onPointerCancel={endDrag}
-          onKeyDown={onKeyDown}
-        >
+        <div {...trackProps} className="projects__track carousel-track" role="region" aria-label={t.projects.carouselAria} tabIndex={0}>
           <span className="projects__track-spacer" aria-hidden="true" />
           {activeCases.map((project, index) => renderCard(project, index))}
           <span className="projects__track-spacer" aria-hidden="true" />
         </div>
 
-        <button type="button" className="projects__side-arrow projects__side-arrow--next" onClick={handleNext} disabled={nextDisabled}>
+        <button
+          type="button"
+          className="projects__side-arrow projects__side-arrow--next"
+          onClick={() => go(activeIndex + 1)}
+          disabled={activeIndex === activeCases.length - 1}
+        >
           <span className="visually-hidden">{t.projects.nextProject}</span>
           <span aria-hidden="true">→</span>
         </button>

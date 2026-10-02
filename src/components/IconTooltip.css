@@ -34,11 +34,16 @@
   object-fit: contain;
 }
 
-.icon-tooltip:hover .icon-tooltip__icon,
 .icon-tooltip__trigger:focus-visible .icon-tooltip__icon,
 .icon-tooltip.is-open .icon-tooltip__icon {
   border-color: var(--color-accent-strong);
-  transform: translateY(-2px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .icon-tooltip:hover .icon-tooltip__icon {
+    border-color: var(--color-accent-strong);
+    transform: translateY(-2px);
+  }
 }
 
 .icon-tooltip__label {

@@ -103,12 +103,6 @@
   border: var(--border-width) solid var(--color-border);
 }
 
-.experience__panel-wrapper {
-  overflow: hidden;
-  max-height: 0;
-  transition: max-height var(--transition-base);
-}
-
 .experience__panel {
   padding-top: var(--space-md);
 }
@@ -150,12 +144,6 @@
   margin-bottom: var(--space-md);
 }
 
-
-@media (prefers-reduced-motion: reduce) {
-  .experience__panel-wrapper {
-    transition: none;
-  }
-}
 
 @media (min-width: 700px) {
   .experience__trigger-meta {

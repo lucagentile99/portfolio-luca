@@ -24,9 +24,12 @@
   transition: border-color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.skill-tab:hover {
-  transform: translateY(-2px);
-  border-color: var(--color-accent-strong);
+/* Hover solo con mouse: elevación máx. 3px y escala 1.02. En táctiles no. */
+@media (hover: hover) and (pointer: fine) {
+  .skill-tab:hover {
+    transform: translateY(-3px) scale(1.02);
+    border-color: var(--color-accent-strong);
+  }
 }
 
 .skill-tab.is-active {
@@ -128,6 +131,10 @@
 @media (prefers-reduced-motion: reduce) {
   .skill-tab {
     transition: none;
+  }
+
+  .skill-tab:hover {
+    transform: none;
   }
 }
 

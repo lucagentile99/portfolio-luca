@@ -1,5 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import { animate } from "animejs";
+import { MOTION, duration, prefersReducedMotion } from "../../utils/motion";
+import { lockScroll, unlockScroll } from "../../utils/scrollLock";
 import type { CaseModalContent } from "../../types";
 import { assetUrl } from "../../utils/assetPath";
 import { useT } from "../../i18n/LanguageContext";
@@ -19,6 +22,10 @@ interface CaseModalProps {
 export default function CaseModal({ content, onClose, onPrev, onNext, prevLabel, nextLabel }: CaseModalProps) {
   const t = useT();
   const dialogRef = useRef<HTMLDivElement>(null);
+  const backdropRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+  const isClosing = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
   const lightboxCloseRef = useRef<HTMLButtonElement>(null);
@@ -39,10 +46,50 @@ export default function CaseModal({ content, onClose, onPrev, onNext, prevLabel,
     }
   }, [lightboxIndex]);
 
+  // Apertura: overlay por opacidad, panel con 16px de desplazamiento y
+  // escala desde 0.985.
+  useLayoutEffect(() => {
+    if (prefersReducedMotion()) return;
+    const ms = duration(MOTION.base);
+    const animations = [
+      animate(backdropRef.current!, { opacity: [0, 1], duration: ms, ease: MOTION.ease }),
+      animate(dialogRef.current!, {
+        opacity: [0, 1],
+        y: [MOTION.distance, 0],
+        scale: [0.985, 1],
+        duration: ms,
+        ease: MOTION.ease,
+      }),
+    ];
+    return () => animations.forEach((animation) => animation.cancel());
+  }, []);
+
+  // Cierre breve (botón, clic fuera, Escape) y recién después se desmonta;
+  // el padre devuelve el foco al elemento que abrió el proyecto.
+  const requestClose = useCallback(() => {
+    if (isClosing.current) return;
+    isClosing.current = true;
+    if (prefersReducedMotion()) {
+      onCloseRef.current();
+      return;
+    }
+    const ms = duration(MOTION.fast);
+    animate(backdropRef.current!, { opacity: 0, duration: ms, ease: MOTION.ease });
+    animate(dialogRef.current!, {
+      opacity: 0,
+      y: MOTION.distanceSmall,
+      scale: 0.985,
+      duration: ms,
+      ease: MOTION.ease,
+      onComplete: () => onCloseRef.current(),
+    });
+  }, []);
+
   useEffect(() => {
     closeButtonRef.current?.focus();
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    // Solo se bloquea el scroll de fondo: el único contenedor desplazable
+    // es .case-modal__scroll.
+    lockScroll();
 
     const onKeyDown = (event: KeyboardEvent) => {
       const openLightboxIndex = lightboxIndexRef.current;
@@ -50,7 +97,7 @@ export default function CaseModal({ content, onClose, onPrev, onNext, prevLabel,
         if (openLightboxIndex !== null) {
           setLightboxIndex(null);
         } else {
-          onClose();
+          requestClose();
         }
         return;
       }
@@ -82,9 +129,9 @@ export default function CaseModal({ content, onClose, onPrev, onNext, prevLabel,
     window.addEventListener("keydown", onKeyDown);
     return () => {
       window.removeEventListener("keydown", onKeyDown);
-      document.body.style.overflow = previousOverflow;
+      unlockScroll();
     };
-  }, [onClose]);
+  }, [requestClose]);
 
   // Vuelve a poner el scroll interno arriba cada vez que cambia de caso (prev/next).
   useEffect(() => {
@@ -92,8 +139,9 @@ export default function CaseModal({ content, onClose, onPrev, onNext, prevLabel,
     setLightboxIndex(null);
   }, [content.id]);
 
-  return (
-    <div className="case-modal__backdrop" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+  return createPortal(
+    <div className="case-modal__layer">
+      <div ref={backdropRef} className="case-modal__backdrop" aria-hidden="true" onMouseDown={requestClose} />
       <div
         className="case-modal"
         role="dialog"
@@ -115,7 +163,7 @@ export default function CaseModal({ content, onClose, onPrev, onNext, prevLabel,
           <div className="case-modal__topbar-info">
             <span className="file-tag case-modal__topbar-tag">{content.id}.case</span>
           </div>
-          <button type="button" className="case-modal__close" onClick={onClose} ref={closeButtonRef}>
+          <button type="button" className="case-modal__close" onClick={requestClose} ref={closeButtonRef}>
             <span className="visually-hidden">{t.caseModal.closeCase}</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M5 5l14 14M19 5 5 19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
@@ -288,6 +336,7 @@ export default function CaseModal({ content, onClose, onPrev, onNext, prevLabel,
           </div>,
           document.body
         )}
-    </div>
+    </div>,
+    document.body
   );
 }

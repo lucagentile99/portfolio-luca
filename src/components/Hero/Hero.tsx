@@ -4,8 +4,13 @@ import { heroContent as heroContentEs } from "../../data/hero";
 import { heroContent as heroContentEn } from "../../data/hero.en";
 import { assetUrl } from "../../utils/assetPath";
 import { useLocalized, useT } from "../../i18n/LanguageContext";
-import Reveal from "../Reveal";
+import { createAnimatable, createTimeline, stagger } from "animejs";
+import { useMotionScope } from "../../hooks/useMotionScope";
+import { MOTION, duration } from "../../utils/motion";
 import "./Hero.css";
+
+/** Desplazamiento máximo de la carpeta siguiendo al cursor (px). */
+const CURSOR_RANGE = 5;
 
 export default function Hero() {
   const t = useT();
@@ -15,6 +20,65 @@ export default function Hero() {
   const availability = useLocalized(siteConfig.availability, siteConfigEn.availability);
   const cvPath = useLocalized(siteConfig.cvPath, siteConfigEn.cvPath);
 
+  const sectionRef = useMotionScope<HTMLElement>((section, scope) => {
+    const steps = Array.from(section.querySelectorAll<HTMLElement>("[data-hero-step]"));
+    const visual = section.querySelector<HTMLElement>(".hero__visual");
+    const tags = Array.from(section.querySelectorAll<HTMLElement>(".hero__tags li"));
+    const intro = Array.from(section.querySelectorAll<HTMLElement>("[data-motion=\"intro\"]"));
+    const done = () =>
+      intro.forEach((el) => {
+        el.style.removeProperty("opacity");
+        el.style.removeProperty("transform");
+        el.dataset.revealed = "true";
+      });
+
+    // Entrada: una sola vez por carga. Con reduced motion, estado final directo.
+    if (scope.matches.reduceMotion || section.dataset.introPlayed) {
+      done();
+    } else {
+      const ms = duration(MOTION.base);
+      const step = 70;
+      // introPlayed se marca al empezar (no al crear): en StrictMode el primer
+      // montaje se revierte antes de arrancar y la entrada igual se ve.
+      const timeline = createTimeline({
+        defaults: { duration: ms, ease: MOTION.ease },
+        onBegin: () => (section.dataset.introPlayed = "true"),
+        onComplete: done,
+      });
+      timeline.add(steps, { opacity: [0, 1], y: [MOTION.distance, 0] }, stagger(step));
+      if (visual) {
+        timeline.add(visual, { opacity: [0, 1], y: [MOTION.distance, 0], scale: [MOTION.scaleFrom, 1] }, steps.length * step);
+      }
+      if (tags.length) {
+        timeline.add(tags, { opacity: [0, 1], y: [MOTION.distanceSmall, 0] }, stagger(MOTION.stagger, { start: (steps.length + 2) * step }));
+      }
+    }
+
+    // Desktop con mouse: la carpeta acompaña al cursor apenas (máx. 5px).
+    // En táctiles o con reduced motion no se registra nada.
+    const folder = section.querySelector<HTMLElement>(".hero__folder");
+    if (!folder || !visual || !scope.matches.finePointer || scope.matches.reduceMotion) return;
+
+    const follow = createAnimatable(folder, { x: MOTION.base, y: MOTION.base, ease: MOTION.ease });
+    const onMove = (event: PointerEvent) => {
+      const rect = visual.getBoundingClientRect();
+      const nx = ((event.clientX - rect.left) / rect.width - 0.5) * 2;
+      const ny = ((event.clientY - rect.top) / rect.height - 0.5) * 2;
+      follow.x(Math.max(-1, Math.min(1, nx)) * CURSOR_RANGE);
+      follow.y(Math.max(-1, Math.min(1, ny)) * CURSOR_RANGE);
+    };
+    const onLeave = () => {
+      follow.x(0);
+      follow.y(0);
+    };
+    visual.addEventListener("pointermove", onMove);
+    visual.addEventListener("pointerleave", onLeave);
+    return () => {
+      visual.removeEventListener("pointermove", onMove);
+      visual.removeEventListener("pointerleave", onLeave);
+    };
+  });
+
   // Resalta la última palabra del título con el color de acento, sin
   // modificar el contenido real (heroContent.title queda intacto).
   const titleParts = heroContent.title.trim().split(" ");
@@ -22,35 +86,35 @@ export default function Hero() {
   const titleLead = titleParts.join(" ");
 
   return (
-    <section id="inicio" className="hero">
+    <section id="inicio" className="hero" ref={sectionRef}>
       <div className="container hero__grid">
         <div className="hero__content">
-          <Reveal as="p" className="eyebrow-editorial">
+          <p className="eyebrow-editorial" data-motion="intro" data-hero-step>
             {heroContent.kicker}
-          </Reveal>
+          </p>
 
-          <Reveal as="p" className="eyebrow" delay={40}>
+          <p className="eyebrow" data-motion="intro" data-hero-step>
             {headline}
-          </Reveal>
+          </p>
 
-          <Reveal as="h1" className="hero__title reveal--mask" delay={80}>
+          <h1 className="hero__title" data-motion="intro" data-hero-step>
             {titleLead} <span className="hero__title-accent">{titleAccent}</span>
-          </Reveal>
+          </h1>
 
-          <Reveal as="p" className="hero__text" delay={160}>
+          <p className="hero__text" data-motion="intro" data-hero-step>
             {heroContent.description}
-          </Reveal>
+          </p>
 
-          <Reveal className="hero__actions" delay={240}>
+          <div className="hero__actions" data-motion="intro" data-hero-step>
             <a href="#proyectos" className="btn btn-primary">
               {t.hero.ctaProjects}
             </a>
             <a href={assetUrl(cvPath)} className="btn btn-outline" download target="_blank" rel="noreferrer">
               {t.hero.ctaCv}
             </a>
-          </Reveal>
+          </div>
 
-          <Reveal className="hero__meta" delay={300}>
+          <div className="hero__meta" data-motion="intro" data-hero-step>
             <span className="hero__meta-item">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path
@@ -69,10 +133,10 @@ export default function Hero() {
               </svg>
               {availability}
             </span>
-          </Reveal>
+          </div>
         </div>
 
-        <Reveal className="hero__visual reveal--photo" delay={160}>
+        <div className="hero__visual" data-motion="intro">
           <div className="hero__folder">
             <span className="hero__folder-word" aria-hidden="true">
               {heroContent.word}
@@ -108,12 +172,12 @@ export default function Hero() {
 
           <ul className="hero__tags" aria-hidden="true">
             {heroContent.folderTags.map((tag) => (
-              <li key={tag} className="folder-tag">
+              <li key={tag} className="folder-tag" data-motion="intro">
                 {tag}
               </li>
             ))}
           </ul>
-        </Reveal>
+        </div>
       </div>
     </section>
   );

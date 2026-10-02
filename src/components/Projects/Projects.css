@@ -40,25 +40,51 @@
 }
 
 .projects__track {
+  position: relative;
   display: flex;
   flex-wrap: nowrap;
   gap: 20px;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
+  /* La tarjeta activa queda alineada con el margen del contenido */
+  scroll-padding-inline: max(clamp(1.5rem, 4vw, 4rem), calc((100vw - 1440px) / 2 + clamp(1.5rem, 4vw, 4rem)));
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  cursor: grab;
-  padding-bottom: var(--space-2xs);
-  touch-action: pan-x;
+  /* Aire arriba/abajo para la elevación y sombra del hover sin recortes */
+  padding-block: 8px var(--space-sm);
+  margin-block: -8px calc(var(--space-sm) * -1 + var(--space-2xs));
+  overscroll-behavior-x: contain;
 }
 
-.projects__track:active {
-  cursor: grabbing;
+/* ==========================================================================
+   Comportamiento común de carruseles (profesionales y académicos): scroll
+   horizontal nativo, swipe real y scroll vertical de la página siempre
+   permitido (touch-action pan-x pan-y). Con mouse se puede arrastrar.
+   ========================================================================== */
+.carousel-track {
+  touch-action: pan-x pan-y;
 }
 
-.projects__track::-webkit-scrollbar {
+.carousel-track::-webkit-scrollbar {
   display: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .carousel-track {
+    cursor: grab;
+  }
+}
+
+/* Mientras se arrastra con mouse, el snap no pelea con el scroll manual */
+.carousel-track.is-dragging {
+  cursor: grabbing;
+  scroll-snap-type: none;
+  scroll-behavior: auto;
+}
+
+.carousel-track.is-dragging .case-card {
+  pointer-events: none;
 }
 
 .projects__track-spacer {
@@ -73,8 +99,9 @@
   }
 }
 
+/* Mobile: 82% deja asomar la tarjeta siguiente */
 .projects__slide {
-  flex: 0 0 88%;
+  flex: 0 0 82%;
   scroll-snap-align: start;
   user-select: none;
 }
@@ -99,12 +126,39 @@
   border-width: 2px;
   border-color: transparent;
   box-shadow: 0 0 0 1px var(--color-border) inset;
+  transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
 }
 
-.case-card:hover {
-  transform: translateY(-3px);
+/* Desktop con mouse, y teclado vía :focus-visible: elevación de 4px,
+   imagen a 1.02 y transición de borde/sombra. En táctiles no hay hover. */
+@media (hover: hover) and (pointer: fine) {
+  .case-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-accent-strong);
+  }
+
+  .case-card:hover .case-card__image img {
+    transform: scale(1.02);
+  }
+
+  .case-card:hover .case-card__tab {
+    background-color: var(--color-accent);
+  }
+
+  .case-card:hover .case-card__open {
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.case-card:has(.case-card__open:focus-visible) {
+  transform: translateY(-4px);
   box-shadow: var(--shadow-md);
   border-color: var(--color-accent-strong);
+}
+
+.case-card:has(.case-card__open:focus-visible) .case-card__image img {
+  transform: scale(1.02);
 }
 
 .case-card__image {
@@ -126,10 +180,6 @@
   transition: transform var(--transition-slow);
 }
 
-.case-card:hover .case-card__image img {
-  transform: scale(1.03);
-}
-
 /* Pestaña tipo folder, sobre la esquina superior izquierda de la imagen */
 .case-card__tab {
   position: absolute;
@@ -145,10 +195,6 @@
   padding: 0.3rem 0.6rem;
   border-radius: var(--radius-sm) var(--radius-sm) var(--radius-sm) 2px;
   transition: background-color var(--transition-fast), color var(--transition-fast);
-}
-
-.case-card:hover .case-card__tab {
-  background-color: var(--color-accent);
 }
 
 .case-card__sticker {
@@ -201,42 +247,31 @@
 .case-card__footer .case-card__cta {
   margin-top: 0;
   align-self: center;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.case-card:hover .case-card__footer .case-card__cta {
-  transform: scale(1.04);
-  box-shadow: var(--shadow-md);
 }
 
 .case-card__title {
   font-size: var(--fs-md);
 }
 
-/* Único elemento real e interactivo de la tarjeta: un <button> cuyo ::after
+/* Único control real de la tarjeta: el botón "Abrir proyecto". Su ::after
    se estira sobre toda la tarjeta (position:relative en .case-card), así
-   toda el área sigue siendo clickeable sin simular un botón con role/span. */
-.case-card__title-btn {
-  display: block;
-  width: 100%;
-  font: inherit;
-  font-weight: 700;
-  color: inherit;
-  background: none;
-  border: none;
-  padding: 0;
-  text-align: left;
-  cursor: pointer;
+   toda el área abre el proyecto con un solo tab stop. Sin transform propio:
+   un transform en el botón achicaría el área clickeable a su tamaño. */
+.case-card__open,
+.case-card__open:hover {
+  transform: none;
 }
 
-.case-card__title-btn::after {
+.case-card__open::after {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 2;
+  border-radius: inherit;
 }
 
-.case-card__title-btn:focus-visible {
-  outline-offset: 4px;
+.case-card__open:focus-visible {
+  outline-offset: 3px;
 }
 
 .case-card__description {
@@ -261,9 +296,13 @@
 
 @media (prefers-reduced-motion: reduce) {
   .case-card,
-  .case-card__image img,
-  .case-card__footer .case-card__cta {
+  .case-card__image img {
     transition: none;
+  }
+
+  .case-card:hover,
+  .case-card:has(.case-card__open:focus-visible) {
+    transform: none;
   }
 }
 
@@ -320,7 +359,7 @@
   white-space: nowrap;
 }
 
-.projects__progress {
+.carousel-progress {
   flex: 1;
   min-width: 60px;
   max-width: 220px;
@@ -333,12 +372,50 @@
   overflow: hidden;
 }
 
-.projects__progress-fill {
+/* Relleno a ancho completo, escalado por anime.js (scaleX) */
+.carousel-progress__fill {
   display: block;
+  width: 100%;
   height: 100%;
   border-radius: var(--radius-full);
   background-color: var(--color-accent-strong);
-  transition: width var(--transition-base);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+/* Puntos (carrusel académico en mobile) — área táctil de 32px */
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 2px;
+  margin-top: var(--space-sm);
+}
+
+.carousel-dots__dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.carousel-dots__dot span {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-on-dark-muted);
+  opacity: 0.55;
+  transition: opacity var(--transition-fast), background-color var(--transition-fast);
+}
+
+.carousel-dots__dot.is-active span {
+  opacity: 1;
+  background-color: var(--color-accent);
 }
 
 /* ==========================================================================
@@ -390,8 +467,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .projects__side-arrow,
-  .projects__progress-fill {
+  .projects__side-arrow {
     transition: none;
   }
 }
