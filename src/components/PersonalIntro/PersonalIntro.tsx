@@ -25,7 +25,7 @@ export default function PersonalIntro() {
   return (
     <section id="sobre-mi" className="section personal-intro">
       <div className="container personal-intro__grid">
-        <Reveal className="personal-intro__photo-col reveal--photo">
+        <Reveal className="personal-intro__photo-col" variant="photo">
           <div className="personal-intro__frame">
             {siteConfig.photoPath && (
               <img
@@ -46,31 +46,25 @@ export default function PersonalIntro() {
           </div>
         </Reveal>
 
-        <div className="personal-intro__content">
-          <Reveal as="p" className="eyebrow" delay={60}>
-            {t.personalIntro.eyebrow}
-          </Reveal>
-          <Reveal as="h2" className="personal-intro__greeting reveal--mask" delay={120}>
-            {personalIntro.greeting}
-          </Reveal>
-          <Reveal as="p" className="personal-intro__text" delay={180}>
-            {personalIntro.text}
-          </Reveal>
+        {/* El contenido entra desde la derecha, escalonado: etiqueta, título,
+            descripción, CTA, rótulo y acordeones. */}
+        <Reveal className="personal-intro__content" variant="from-right" stagger delay={120}>
+          <p className="eyebrow">{t.personalIntro.eyebrow}</p>
+          <h2 className="personal-intro__greeting">{personalIntro.greeting}</h2>
+          <p className="personal-intro__text">{personalIntro.text}</p>
 
-          <Reveal delay={240}>
+          <div>
             <a href="#proyectos" className="btn btn-secondary personal-intro__cta">
               {personalIntro.ctaLabel}
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M5 12h13M13 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </a>
-          </Reveal>
+          </div>
 
-          <Reveal as="p" className="personal-intro__process-label" delay={300}>
-            {aboutTitle}
-          </Reveal>
+          <p className="personal-intro__process-label">{aboutTitle}</p>
 
-          <Reveal className="about__pillars" stagger delay={340}>
+          <div className="about__pillars">
             {aboutPillars.map((pillar, index) => {
               const isOpen = openIndex === index;
               const triggerId = `${baseId}-trigger-${index}`;
@@ -113,8 +107,8 @@ export default function PersonalIntro() {
                 </article>
               );
             })}
-          </Reveal>
-        </div>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

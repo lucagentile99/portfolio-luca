@@ -135,13 +135,13 @@ export default function Skills() {
   return (
     <section id="habilidades" className="section section--alt skills">
       <div className="container">
-        <Reveal as="div" className="section-head reveal--mask">
+        <Reveal as="div" className="section-head" variant="head">
           <p className="eyebrow-editorial">{skillsIntro.eyebrow}</p>
           <h2 className="section-title">{skillsIntro.title}</h2>
           <p className="section-subtitle">{skillsIntro.subtitle}</p>
         </Reveal>
 
-        <Reveal as="div" delay={60}>
+        <div>
           <SkillTabs
             modules={skillModules}
             activeId={activeId}
@@ -162,13 +162,13 @@ export default function Skills() {
             onChange={setActiveId}
             renderIcon={(icon) => <SkillIconGraphic icon={icon} />}
           />
-        </Reveal>
+        </div>
 
         <div className="tool-stack">
           <p className="eyebrow-editorial">{toolStackIntro.title}</p>
           <p className="tool-stack__subtitle">{toolStackIntro.subtitle}</p>
 
-          <Reveal className="tool-stack__grid" stagger>
+          <Reveal className="tool-stack__grid" variant="card" stagger>
             {toolGroups.map((group) => (
               <div className={`tool-stack__module tool-stack__module--${group.id}`} key={group.id}>
                 <p className="tool-stack__module-title">{group.label}</p>
@@ -195,7 +195,7 @@ export default function Skills() {
 
           <div className="languages__row">
             {languages.map((lang, index) => (
-              <Reveal as="article" key={lang.code} className="language-card" delay={index * 60}>
+              <Reveal as="article" key={lang.code} className="language-card" variant="card" delay={index * 100}>
                 <h4>
                   {lang.code} / {lang.language}
                 </h4>

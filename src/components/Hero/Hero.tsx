@@ -10,7 +10,17 @@ import { MOTION, duration } from "../../utils/motion";
 import "./Hero.css";
 
 /** Desplazamiento máximo de la carpeta siguiendo al cursor (px). */
-const CURSOR_RANGE = 5;
+const CURSOR_RANGE = 8;
+
+/** Entrada de cada tipo de bloque del Hero (data-hero-step). */
+const HERO_STEPS: Record<string, Record<string, [number, number]>> = {
+  label: { opacity: [0, 1], y: [18, 0] },
+  title: { opacity: [0, 1], y: [28, 0] },
+  text: { opacity: [0, 1], y: [22, 0] },
+  actions: { opacity: [0, 1], y: [18, 0], scale: [0.96, 1] },
+};
+/** Separación entre bloques de la timeline (ms). */
+const HERO_STEP_GAP = 100;
 
 export default function Hero() {
   const t = useT();
@@ -37,7 +47,6 @@ export default function Hero() {
       done();
     } else {
       const ms = duration(MOTION.base);
-      const step = 70;
       // introPlayed se marca al empezar (no al crear): en StrictMode el primer
       // montaje se revierte antes de arrancar y la entrada igual se ve.
       const timeline = createTimeline({
@@ -45,16 +54,20 @@ export default function Hero() {
         onBegin: () => (section.dataset.introPlayed = "true"),
         onComplete: done,
       });
-      timeline.add(steps, { opacity: [0, 1], y: [MOTION.distance, 0] }, stagger(step));
+      steps.forEach((el, i) => {
+        timeline.add(el, HERO_STEPS[el.dataset.heroStep ?? "text"] ?? HERO_STEPS.text, i * HERO_STEP_GAP);
+      });
+      // Carpeta/foto: entra junto con los botones, desde la derecha y algo más chica.
+      const visualAt = 4 * HERO_STEP_GAP;
       if (visual) {
-        timeline.add(visual, { opacity: [0, 1], y: [MOTION.distance, 0], scale: [MOTION.scaleFrom, 1] }, steps.length * step);
+        timeline.add(visual, { opacity: [0, 1], x: [24, 0], scale: [0.94, 1], duration: duration(MOTION.base + 150) }, visualAt);
       }
       if (tags.length) {
-        timeline.add(tags, { opacity: [0, 1], y: [MOTION.distanceSmall, 0] }, stagger(MOTION.stagger, { start: (steps.length + 2) * step }));
+        timeline.add(tags, { opacity: [0, 1], y: [MOTION.distanceSmall, 0], scale: [MOTION.scaleFrom, 1] }, stagger(MOTION.stagger, { start: visualAt + 300 }));
       }
     }
 
-    // Desktop con mouse: la carpeta acompaña al cursor apenas (máx. 5px).
+    // Desktop con mouse: la carpeta acompaña al cursor (máx. 8px).
     // En táctiles o con reduced motion no se registra nada.
     const folder = section.querySelector<HTMLElement>(".hero__folder");
     if (!folder || !visual || !scope.matches.finePointer || scope.matches.reduceMotion) return;
@@ -89,23 +102,23 @@ export default function Hero() {
     <section id="inicio" className="hero" ref={sectionRef}>
       <div className="container hero__grid">
         <div className="hero__content">
-          <p className="eyebrow-editorial" data-motion="intro" data-hero-step>
+          <p className="eyebrow-editorial" data-motion="intro" data-hero-step="label">
             {heroContent.kicker}
           </p>
 
-          <p className="eyebrow" data-motion="intro" data-hero-step>
+          <p className="eyebrow" data-motion="intro" data-hero-step="label">
             {headline}
           </p>
 
-          <h1 className="hero__title" data-motion="intro" data-hero-step>
+          <h1 className="hero__title" data-motion="intro" data-hero-step="title">
             {titleLead} <span className="hero__title-accent">{titleAccent}</span>
           </h1>
 
-          <p className="hero__text" data-motion="intro" data-hero-step>
+          <p className="hero__text" data-motion="intro" data-hero-step="text">
             {heroContent.description}
           </p>
 
-          <div className="hero__actions" data-motion="intro" data-hero-step>
+          <div className="hero__actions" data-motion="intro" data-hero-step="actions">
             <a href="#proyectos" className="btn btn-primary">
               {t.hero.ctaProjects}
             </a>
@@ -114,7 +127,7 @@ export default function Hero() {
             </a>
           </div>
 
-          <div className="hero__meta" data-motion="intro" data-hero-step>
+          <div className="hero__meta" data-motion="intro" data-hero-step="text">
             <span className="hero__meta-item">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path

@@ -17,12 +17,12 @@ export default function Experience() {
   return (
     <section id="experiencia" className="section section--alt experience">
       <div className="container">
-        <Reveal as="div" className="section-head reveal--mask">
+        <Reveal as="div" className="section-head" variant="head">
           <p className="eyebrow">{t.experience.eyebrow}</p>
           <h2 className="section-title">{t.experience.title}</h2>
         </Reveal>
 
-        <Reveal as="ol" className="experience__timeline" stagger>
+        <Reveal as="ol" className="experience__timeline" variant="card" stagger>
           {experienceEntries.map((entry, index) => {
             const isOpen = openIndex === index;
             const triggerId = `${baseId}-exp-trigger-${index}`;

@@ -1,6 +1,8 @@
-import { useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode, type RefObject } from "react";
+import { type KeyboardEvent, type ReactNode, type RefObject } from "react";
 import type { SkillIcon, SkillModule } from "../../types";
 import { useT } from "../../i18n/LanguageContext";
+import Collapse from "../Collapse";
+import Reveal from "../Reveal";
 import "./SkillTabs.css";
 
 interface SkillTabProps {
@@ -64,7 +66,7 @@ export function SkillTabs({ modules, activeId, baseId, onChange, renderIcon, tab
   };
 
   return (
-    <div className="skill-tabs" role="tablist" aria-label={t.skills.workAreasAria}>
+    <Reveal className="skill-tabs" variant="card" stagger role="tablist" aria-label={t.skills.workAreasAria}>
       {modules.map((module, index) => (
         <SkillTab
           key={module.id}
@@ -80,7 +82,7 @@ export function SkillTabs({ modules, activeId, baseId, onChange, renderIcon, tab
           }}
         />
       ))}
-    </div>
+    </Reveal>
   );
 }
 
@@ -116,16 +118,9 @@ interface SkillAccordionProps {
 // despliega inmediatamente debajo de esa misma tarjeta (nunca después de
 // las 4). Solo uno abierto a la vez; tocar el que ya está abierto lo cierra.
 export function SkillAccordion({ modules, activeId, baseId, onChange, renderIcon }: SkillAccordionProps) {
-  const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [heights, setHeights] = useState<number[]>([]);
-
-  useLayoutEffect(() => {
-    setHeights(panelRefs.current.map((el) => el?.scrollHeight ?? 0));
-  }, [activeId]);
-
   return (
-    <div className="skill-accordion">
-      {modules.map((module, index) => {
+    <Reveal className="skill-accordion" variant="card" stagger>
+      {modules.map((module) => {
         const isOpen = module.id === activeId;
         const triggerId = `${baseId}-accordion-trigger-${module.id}`;
         const panelId = `${baseId}-accordion-panel-${module.id}`;
@@ -151,19 +146,8 @@ export function SkillAccordion({ modules, activeId, baseId, onChange, renderIcon
               </span>
             </button>
 
-            <div
-              className="skill-accordion__panel-wrapper"
-              style={{ maxHeight: isOpen ? `${heights[index] ?? 600}px` : "0px" }}
-            >
-              <div
-                id={panelId}
-                role="region"
-                aria-labelledby={triggerId}
-                className="skill-accordion__panel"
-                ref={(el) => {
-                  panelRefs.current[index] = el;
-                }}
-              >
+            <Collapse open={isOpen} id={panelId} role="region" aria-labelledby={triggerId}>
+              <div className="skill-accordion__panel">
                 <p className="skill-panel__title">{module.panelTitle}</p>
                 <ul className="skill-panel__details">
                   {module.details.map((detail) => (
@@ -171,10 +155,10 @@ export function SkillAccordion({ modules, activeId, baseId, onChange, renderIcon
                   ))}
                 </ul>
               </div>
-            </div>
+            </Collapse>
           </div>
         );
       })}
-    </div>
+    </Reveal>
   );
 }

@@ -60,7 +60,7 @@ export default function ProfessionalStats() {
   return (
     <section className="stats" aria-label="Indicadores profesionales">
       <div className="container">
-        <Reveal className="stats__grid" stagger>
+        <Reveal className="stats__grid" variant="card" stagger>
           {professionalStats.map((stat) => (
             <div key={stat.label} className="stats__item">
               <StatValue value={stat.value} />

@@ -48,7 +48,7 @@ export default function Projects() {
   // Toda la tarjeta abre el proyecto: el botón "Abrir proyecto" es el único
   // control real y su ::after se estira sobre la tarjeta (un solo tab stop).
   const renderCard = (project: (typeof activeCases)[number], index: number) => (
-    <Reveal as="article" key={project.id} className="case-card card projects__slide" delay={Math.min(index, 3) * 60}>
+    <Reveal as="article" key={project.id} className="case-card card projects__slide" variant="card-x" delay={Math.min(index, 3) * 100}>
       <div className={`case-card__image ${index % 2 === 1 ? "case-card__image--celeste" : ""}`}>
         {project.gallery[0] ? (
           <img src={assetUrl(project.gallery[0].src)} alt={project.gallery[0].alt} loading="lazy" draggable={false} />
@@ -98,7 +98,7 @@ export default function Projects() {
   return (
     <section id="proyectos" className="section projects">
       <div className="projects__wide">
-        <Reveal as="div" className="section-head projects__head reveal--mask">
+        <Reveal as="div" className="section-head projects__head" variant="head">
           <p className="eyebrow">{t.projects.eyebrow}</p>
           <div className="projects__title-row">
             <h2 className="section-title">{t.projects.title}</h2>

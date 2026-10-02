@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import type { KeyboardEvent, PointerEvent } from "react";
+import type { KeyboardEvent, PointerEvent, WheelEvent } from "react";
 import { prefersReducedMotion } from "../utils/motion";
 
 /**
@@ -105,8 +105,13 @@ export function useCarousel(slideSelector: string) {
     onPointerUp: (event: PointerEvent<HTMLDivElement>) => endDrag(event.pointerId),
     onPointerCancel: (event: PointerEvent<HTMLDivElement>) => endDrag(event.pointerId),
     onLostPointerCapture: (event: PointerEvent<HTMLDivElement>) => endDrag(event.pointerId),
-    onScroll: () => {
+    // Solo un gesto real cuenta como interacción (el snap inicial del
+    // navegador también dispara scroll y no debe ocultar la ayuda).
+    onTouchStart: () => {
       if (!hasInteracted) markInteracted();
+    },
+    onWheel: (event: WheelEvent<HTMLDivElement>) => {
+      if (!hasInteracted && Math.abs(event.deltaX) > Math.abs(event.deltaY)) markInteracted();
     },
     onKeyDown: (event: KeyboardEvent<HTMLDivElement>) => {
       if (event.target !== event.currentTarget) return;

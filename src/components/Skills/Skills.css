@@ -50,7 +50,7 @@
 @media (hover: hover) and (pointer: fine) {
   .tool-stack__module:hover {
     border-color: var(--color-accent-strong);
-    transform: translateY(-3px) scale(1.02);
+    transform: translateY(-5px) scale(1.02);
     box-shadow: var(--shadow-md);
   }
 }

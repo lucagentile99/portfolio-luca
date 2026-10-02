@@ -129,17 +129,17 @@
   transition: transform var(--transition-base), box-shadow var(--transition-base), border-color var(--transition-base);
 }
 
-/* Desktop con mouse, y teclado vía :focus-visible: elevación de 4px,
-   imagen a 1.02 y transición de borde/sombra. En táctiles no hay hover. */
+/* Desktop con mouse, y teclado vía :focus-visible: elevación de 5px,
+   imagen a 1.025 y transición de borde/sombra. En táctiles no hay hover. */
 @media (hover: hover) and (pointer: fine) {
   .case-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
     box-shadow: var(--shadow-md);
     border-color: var(--color-accent-strong);
   }
 
   .case-card:hover .case-card__image img {
-    transform: scale(1.02);
+    transform: scale(1.025);
   }
 
   .case-card:hover .case-card__tab {
@@ -152,13 +152,13 @@
 }
 
 .case-card:has(.case-card__open:focus-visible) {
-  transform: translateY(-4px);
+  transform: translateY(-5px);
   box-shadow: var(--shadow-md);
   border-color: var(--color-accent-strong);
 }
 
 .case-card:has(.case-card__open:focus-visible) .case-card__image img {
-  transform: scale(1.02);
+  transform: scale(1.025);
 }
 
 .case-card__image {
@@ -258,7 +258,8 @@
    toda el área abre el proyecto con un solo tab stop. Sin transform propio:
    un transform en el botón achicaría el área clickeable a su tamaño. */
 .case-card__open,
-.case-card__open:hover {
+.case-card__open:hover,
+.case-card__open:active {
   transform: none;
 }
 

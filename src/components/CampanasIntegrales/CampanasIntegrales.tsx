@@ -48,7 +48,7 @@ export default function CampanasIntegrales() {
   return (
     <section id="campanas" className="section section--dark campanas">
       <div className="container">
-        <Reveal as="div" className="section-head reveal--mask">
+        <Reveal as="div" className="section-head" variant="head">
           <p className="eyebrow-editorial">{academicIntro.eyebrow}</p>
           <h2 className="section-title">{t.academic.title}</h2>
           <p className="section-subtitle campanas__phrase">{academicIntro.phrase}</p>
@@ -58,7 +58,7 @@ export default function CampanasIntegrales() {
       <div className="campanas__carousel">
         <div {...trackProps} className="campanas__grid carousel-track" role="region" aria-label={t.academic.carouselAria} tabIndex={0}>
           {academicCampaigns.map((campaign, index) => (
-            <Reveal as="article" key={campaign.id} className="case-card case-card--dark card campanas__slide" delay={index * 60}>
+            <Reveal as="article" key={campaign.id} className="case-card case-card--dark card campanas__slide" variant="card-x" delay={Math.min(index, 2) * 100}>
               {campaign.gallery[0] && (
                 <div className={`case-card__image ${index % 2 === 1 ? "case-card__image--celeste" : ""}`}>
                   <img src={assetUrl(campaign.gallery[0].src)} alt={campaign.gallery[0].alt} loading="lazy" draggable={false} />

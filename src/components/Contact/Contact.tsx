@@ -24,7 +24,7 @@ export default function Contact() {
   return (
     <section id="contacto" className="section section--dark contact">
       <div className="container contact__grid">
-        <Reveal as="div" className="contact__intro">
+        <Reveal as="div" className="contact__intro" variant="head">
           <p className="eyebrow">{t.contact.eyebrow}</p>
           <h2 className="section-title contact__title">
             {t.contact.titleLead} <em className="contact__title-accent">{t.contact.titleAccent}</em>
@@ -33,7 +33,7 @@ export default function Contact() {
           <p className="contact__text">{t.contact.availabilityText}</p>
         </Reveal>
 
-        <Reveal as="div" className="contact__cta-panel card" delay={120}>
+        <Reveal as="div" className="contact__cta-panel card" variant="card" delay={200}>
           <span className="contact__folder" aria-hidden="true">
             <span className="contact__folder-tab" />
           </span>

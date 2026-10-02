@@ -52,7 +52,7 @@ export default function Collapse({ open, children, className = "", ...rest }: Co
       return;
     }
 
-    const ms = duration(open ? MOTION.base : MOTION.fast + 60);
+    const ms = duration(open ? MOTION.panel : MOTION.fast);
     // Si se reabre a mitad de un cierre (o al revés), parte de la altura actual.
     const from = panel.hidden ? 0 : panel.offsetHeight;
     panel.hidden = false;
@@ -66,7 +66,7 @@ export default function Collapse({ open, children, className = "", ...rest }: Co
       running.current.push(
         animate(inner, {
           opacity: open ? [0, 1] : [1, 0],
-          y: open ? [-MOTION.distanceSmall, 0] : [0, -MOTION.distanceSmall],
+          y: open ? [-MOTION.panelOffset, 0] : [0, -MOTION.panelOffset],
           duration: ms,
           ease: MOTION.ease,
         })

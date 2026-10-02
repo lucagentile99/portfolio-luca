@@ -24,10 +24,10 @@
   transition: border-color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-/* Hover solo con mouse: elevación máx. 3px y escala 1.02. En táctiles no. */
+/* Hover solo con mouse: elevación de 5px y escala 1.02. En táctiles no. */
 @media (hover: hover) and (pointer: fine) {
   .skill-tab:hover {
-    transform: translateY(-3px) scale(1.02);
+    transform: translateY(-5px) scale(1.02);
     border-color: var(--color-accent-strong);
   }
 }
@@ -231,22 +231,11 @@
   color: var(--color-accent-strong);
 }
 
-.skill-accordion__panel-wrapper {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height var(--transition-slow);
-}
-
+/* Altura, opacidad y desplazamiento los anima anime.js (components/Collapse.tsx) */
 .skill-accordion__panel {
   padding: 20px;
   padding-top: 0;
   background-color: var(--color-accent-soft);
-  opacity: 0;
-  transition: opacity var(--transition-base);
-}
-
-.skill-accordion__item.is-open .skill-accordion__panel {
-  opacity: 1;
 }
 
 .skill-accordion__panel .skill-panel__title {
@@ -254,9 +243,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .skill-accordion__item,
-  .skill-accordion__panel-wrapper,
-  .skill-accordion__panel {
+  .skill-accordion__item {
     transition: none;
   }
 }

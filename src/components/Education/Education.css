@@ -116,12 +116,6 @@
   grid-column: 1 / -1;
 }
 
-.education__panel-wrapper {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height var(--transition-slow);
-}
-
 .education__panel {
   position: relative;
   z-index: 1;
@@ -191,7 +185,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .education__panel-wrapper,
   .education__toggle {
     transition: none;
   }

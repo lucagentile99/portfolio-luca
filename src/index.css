@@ -344,8 +344,22 @@ p {
   white-space: nowrap;
 }
 
-.btn:hover {
-  transform: translateY(-2px);
+/* Botones: escala 1 → 1.03 y regreso, solo con mouse (en táctiles no hay hover). */
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover {
+    transform: scale(1.03);
+  }
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn:hover,
+  .btn:active {
+    transform: none;
+  }
 }
 
 .btn:active {
@@ -613,14 +627,16 @@ p {
    haya parpadeo antes de que corra el JS. Solo aplica sin reduced motion:
    con reduced motion todo se muestra directamente en su estado final. */
 @media (prefers-reduced-motion: no-preference) {
-  .reveal:not([data-revealed]):not(.reveal--stagger):not(.reveal--mask),
-  .reveal--stagger:not([data-revealed]) > *,
+  .reveal:not([data-revealed]):not(.reveal--group):not(.reveal--mask),
+  .reveal--group:not([data-revealed]) > *,
   [data-motion="intro"]:not([data-revealed]) {
     opacity: 0;
   }
 
-  /* Titulares: barrido vertical, sin mover el layout */
-  .reveal--mask:not([data-revealed]) {
+  /* Títulos editoriales: barrido vertical (máscara), sin mover el layout */
+  .reveal--mask:not([data-revealed]),
+  .reveal--head:not([data-revealed]) > :is(.eyebrow, .eyebrow-editorial) {
+    opacity: 1;
     clip-path: inset(0 0 100% 0);
   }
 }

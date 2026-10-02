@@ -1,7 +1,8 @@
-import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { useId, useState } from "react";
 import { educationEntries as educationEntriesEs, educationIntro as educationIntroEs } from "../../data/education";
 import { educationEntries as educationEntriesEn, educationIntro as educationIntroEn } from "../../data/education.en";
 import { useLocalized, useT } from "../../i18n/LanguageContext";
+import Collapse from "../Collapse";
 import Reveal from "../Reveal";
 import "./Education.css";
 
@@ -71,33 +72,21 @@ function EntryVisual({ entryId }: { entryId: string }) {
 export default function Education() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const baseId = useId();
-  const panelRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [panelHeights, setPanelHeights] = useState<number[]>([]);
   const t = useT();
   const educationEntries = useLocalized(educationEntriesEs, educationEntriesEn);
   const educationIntro = useLocalized(educationIntroEs, educationIntroEn);
 
-  useLayoutEffect(() => {
-    setPanelHeights(panelRefs.current.map((el) => el?.scrollHeight ?? 0));
-  }, [openIndex]);
-
-  useEffect(() => {
-    const measure = () => setPanelHeights(panelRefs.current.map((el) => el?.scrollHeight ?? 0));
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
-  }, []);
-
   return (
     <section id="educacion" className="section education" aria-labelledby="educacion-titulo">
       <div className="container">
-        <Reveal as="div" className="section-head reveal--mask">
+        <Reveal as="div" className="section-head" variant="head">
           <p className="eyebrow">{t.education.eyebrow}</p>
           <h2 className="section-title" id="educacion-titulo">
             {educationIntro}
           </h2>
         </Reveal>
 
-        <ol className="education__timeline">
+        <Reveal as="ol" className="education__timeline" variant="card" stagger>
           {educationEntries.map((entry, index) => {
             const isOpen = openIndex === index;
             const triggerId = `${baseId}-edu-trigger-${index}`;
@@ -106,11 +95,7 @@ export default function Education() {
             return (
               <li key={entry.id} className="education__node">
                 <span className="education__node-marker">0{index + 1}</span>
-                <Reveal
-                  as="article"
-                  className={`education__card card ${isOpen ? "is-open" : ""}`}
-                  delay={140 + index * 60}
-                >
+                <article className={`education__card card ${isOpen ? "is-open" : ""}`}>
                   <h3 className="education__heading">
                     <button
                       type="button"
@@ -136,19 +121,8 @@ export default function Education() {
                   </h3>
 
                   {(entry.description || entry.learnings) && (
-                    <div
-                      className="education__panel-wrapper"
-                      style={{ maxHeight: isOpen ? `${panelHeights[index] ?? 260}px` : "0px" }}
-                    >
-                      <div
-                        className="education__panel"
-                        id={panelId}
-                        role="region"
-                        aria-labelledby={triggerId}
-                        ref={(el) => {
-                          panelRefs.current[index] = el;
-                        }}
-                      >
+                    <Collapse open={isOpen} id={panelId} role="region" aria-labelledby={triggerId}>
+                      <div className="education__panel">
                         <div className="education__panel-grid">
                           <div className="education__panel-copy">
                             {entry.description && <p className="education__description">{entry.description}</p>}
@@ -165,13 +139,13 @@ export default function Education() {
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </Collapse>
                   )}
-                </Reveal>
+                </article>
               </li>
             );
           })}
-        </ol>
+        </Reveal>
       </div>
     </section>
   );
